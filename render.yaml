@@ -3,7 +3,7 @@ services:
     name: agrovoice
     env: node
     buildCommand: npm run build
-    startCommand: npm start
+    startCommand: node server/dist/index.js
     envVars:
       - key: NODE_VERSION
         value: 20.0.0
@@ -11,5 +11,3 @@ services:
         sync: false
       - key: JWT_SECRET
         generateValue: true
-      - key: PORT
-        value: 5000
