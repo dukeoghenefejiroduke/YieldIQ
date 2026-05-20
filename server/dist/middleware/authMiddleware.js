@@ -10,7 +10,11 @@ const authMiddleware = (req, res, next) => {
     if (!token)
         return res.status(401).json({ error: 'Unauthorized' });
     try {
-        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET || 'secret');
+        if (!process.env.JWT_SECRET) {
+            console.error('JWT_SECRET is missing');
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
         next();
     }

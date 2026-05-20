@@ -3,14 +3,28 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import authRoutes from './routes/authRoutes';
 import logRoutes from './routes/logRoutes';
 
 dotenv.config();
 
 const app = express();
+
+// Security Middleware
+app.use(helmet());
 app.use(express.json());
 app.use(cors());
+
+// Rate Limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api/', limiter);
 
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/agrovoice')
   .then(() => console.log('Connected to MongoDB'))
@@ -23,7 +37,8 @@ app.use('/api/logs', logRoutes);
 const clientDistPath = path.join(__dirname, '../../client/dist');
 app.use(express.static(clientDistPath));
 
-app.get('*', (req, res) => {
+// Express 5 wildcard fix: use (.*) instead of *
+app.get('(.*)', (req, res) => {
   res.sendFile(path.join(clientDistPath, 'index.html'));
 });
 

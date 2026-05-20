@@ -10,12 +10,18 @@ const User_1 = __importDefault(require("../models/User"));
 const signup = async (req, res) => {
     try {
         const { username, email, password } = req.body;
+        // Check if user already exists
+        const existingUser = await User_1.default.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ error: 'User already exists' });
+        }
         const hashedPassword = await bcryptjs_1.default.hash(password, 10);
         const user = new User_1.default({ username, email, password: hashedPassword });
         await user.save();
         res.status(201).json({ message: 'User created successfully' });
     }
     catch (error) {
+        console.error('Signup error:', error);
         res.status(500).json({ error: 'Error creating user' });
     }
 };
@@ -23,11 +29,14 @@ exports.signup = signup;
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await User_1.default.findOne({ email });
+        const user = await User_1.default.findOne({ email }).select('+password');
         if (!user || !(await bcryptjs_1.default.compare(password, user.password))) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
-        const token = jsonwebtoken_1.default.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret', { expiresIn: '1h' });
+        if (!process.env.JWT_SECRET) {
+            throw new Error('JWT_SECRET is not defined in environment variables');
+        }
+        const token = jsonwebtoken_1.default.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.json({ token, user: { id: user._id, username: user.username, email: user.email } });
     }
     catch (error) {
