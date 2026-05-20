@@ -2,7 +2,7 @@ services:
   - type: web
     name: agrovoice
     env: node
-    buildCommand: npm run build
+    buildCommand: npm install && npm run build
     startCommand: node server/dist/index.js
     envVars:
       - key: NODE_VERSION
