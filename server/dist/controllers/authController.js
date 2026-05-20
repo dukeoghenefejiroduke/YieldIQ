@@ -10,19 +10,34 @@ const User_1 = __importDefault(require("../models/User"));
 const signup = async (req, res) => {
     try {
         const { username, email, password } = req.body;
-        // Check if user already exists
-        const existingUser = await User_1.default.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ error: 'User already exists' });
+        // Basic validation
+        if (!username || !email || !password) {
+            return res.status(400).json({ error: 'All fields are required' });
         }
-        const hashedPassword = await bcryptjs_1.default.hash(password, 10);
+        if (password.length < 8) {
+            return res.status(400).json({ error: 'Password must be at least 8 characters long' });
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ error: 'Invalid email format' });
+        }
+        // Check if user already exists
+        const existingEmail = await User_1.default.findOne({ email });
+        if (existingEmail) {
+            return res.status(400).json({ error: 'User with this email already exists' });
+        }
+        const existingUsername = await User_1.default.findOne({ username });
+        if (existingUsername) {
+            return res.status(400).json({ error: 'Username is already taken' });
+        }
+        const hashedPassword = await bcryptjs_1.default.hash(password, 12); // Increased salt rounds for better security
         const user = new User_1.default({ username, email, password: hashedPassword });
         await user.save();
         res.status(201).json({ message: 'User created successfully' });
     }
     catch (error) {
         console.error('Signup error:', error);
-        res.status(500).json({ error: 'Error creating user' });
+        res.status(500).json({ error: 'Internal server error' });
     }
 };
 exports.signup = signup;

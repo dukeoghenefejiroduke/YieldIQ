@@ -8,13 +8,22 @@ const Log_1 = __importDefault(require("../models/Log"));
 const createLog = async (req, res) => {
     try {
         const { transcription, timestamp, location } = req.body;
+        if (!transcription) {
+            return res.status(400).json({ error: 'Transcription is required' });
+        }
         const userId = req.user.userId;
-        const newLog = new Log_1.default({ userId, transcription, timestamp, location });
+        const newLog = new Log_1.default({
+            userId,
+            transcription,
+            timestamp: timestamp || Date.now(),
+            location
+        });
         await newLog.save();
         res.status(201).json(newLog);
     }
     catch (error) {
-        res.status(500).json({ error: 'Error saving log' });
+        console.error('Create log error:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 };
 exports.createLog = createLog;
@@ -25,7 +34,8 @@ const getLogs = async (req, res) => {
         res.json(logs);
     }
     catch (error) {
-        res.status(500).json({ error: 'Error fetching logs' });
+        console.error('Get logs error:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 };
 exports.getLogs = getLogs;
