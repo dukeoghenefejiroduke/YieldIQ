@@ -15,7 +15,10 @@ const app = express();
 // Security Middleware
 app.use(helmet());
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'https://yieldiq.onrender.com',
+  credentials: true
+}));
 
 // Rate Limiting
 const limiter = rateLimit({
@@ -36,16 +39,6 @@ if (process.env.MONGO_URI) {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/logs', logRoutes);
-
-// Serve static files from the React app
-const clientDistPath = path.join(__dirname, '../../client/dist');
-app.use(express.static(clientDistPath));
-
-// Express 5 catch-all route: use a regular expression to bypass path-to-regexp parser
-// This ensures that all non-API requests serve the React app's index.html
-app.get(/^(?!\/api).*/, (req, res) => {
-  res.sendFile(path.join(clientDistPath, 'index.html'));
-});
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
