@@ -15,8 +15,9 @@ export const Signup = () => {
       await api.post('/auth/signup', { username, email, password });
       toast.success('Account created! Please log in.');
       navigate('/login');
-    } catch {
-      toast.error('Signup failed');
+    } catch (error: any) {
+      const message = error.response?.data?.error || 'Signup failed';
+      toast.error(message);
     }
   };
 
