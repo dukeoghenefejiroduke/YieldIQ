@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import toast from 'react-hot-toast';
-import { Mic, Square, Save, Play } from 'lucide-react';
+import { Mic, Square, Save } from 'lucide-react';
 import { db } from '../db/db';
 import { useAuthStore } from '../store/authStore';
 
