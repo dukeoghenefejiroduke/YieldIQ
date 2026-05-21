@@ -3,26 +3,36 @@ import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { Mail, Lock, User, CheckCircle } from 'lucide-react';
 import api from '../services/api';
+import { useAuthStore } from '../store/authStore';
 
 export const Signup = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const loginStore = useAuthStore((state) => state.login);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
+      // 1. Create account
       await api.post('/auth/signup', { username, email, password });
-      toast.success('Account created! Ready to harvest.', {
+      
+      // 2. Automatically log in for a seamless experience
+      const { data } = await api.post('/auth/login', { email, password });
+      loginStore(data.user, data.token);
+
+      toast.success('Account created! Welcome to the field.', {
         icon: '🚜',
         style: { borderRadius: '12px', background: '#1a3c1a', color: '#fff' }
       });
-      navigate('/login');
+      
+      navigate('/dashboard');
     } catch (error: any) {
-      const message = error.response?.data?.error || 'Signup failed';
+      console.error('Signup/Auto-login error:', error);
+      const message = error.response?.data?.error || 'Account creation failed. Please try again.';
       toast.error(message);
     } finally {
       setIsLoading(false);
