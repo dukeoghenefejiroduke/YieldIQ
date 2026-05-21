@@ -48,12 +48,23 @@ app.get('/api/health', (req, res) => {
 });
 
 // Serve static assets in production
-const clientDistPath = path.resolve(__dirname, '../../client/dist');
-app.use(express.static(clientDistPath));
+const clientDistPath = path.join(process.cwd(), 'client', 'dist');
+console.log('Serving static files from:', clientDistPath);
+
+if (require('fs').existsSync(clientDistPath)) {
+  app.use(express.static(clientDistPath));
+} else {
+  console.error('Warning: client/dist directory not found at', clientDistPath);
+}
 
 // Catch-all route using Regex to serve index.html for any non-API route
 app.get(/^((?!\/api).)*$/, (req, res) => {
-  res.sendFile(path.join(clientDistPath, 'index.html'));
+  const indexPath = path.join(clientDistPath, 'index.html');
+  if (require('fs').existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).send('Frontend build not found. Please ensure "npm run build" has completed.');
+  }
 });
 
 const PORT = process.env.PORT || 5000;
