@@ -29,7 +29,7 @@ const limiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
-app.use('/api/', limiter);
+app.use('/api', limiter);
 
 if (process.env.MONGO_URI) {
   mongoose.connect(process.env.MONGO_URI)
@@ -51,7 +51,8 @@ app.get('/api/health', (req, res) => {
 const clientDistPath = path.resolve(__dirname, '../../client/dist');
 app.use(express.static(clientDistPath));
 
-app.get('/:path*', (req, res) => {
+// Catch-all route using Regex to serve index.html for any non-API route
+app.get(/^((?!\/api).)*$/, (req, res) => {
   res.sendFile(path.join(clientDistPath, 'index.html'));
 });
 
