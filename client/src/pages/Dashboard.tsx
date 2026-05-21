@@ -16,7 +16,7 @@ export const Dashboard = () => {
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        const { data } = await api.get('/logs');
+        const { data } = await api.get('logs');
         setLogs(data);
       } catch (error) {
         console.error('Fetch logs error:', error);

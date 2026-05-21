@@ -18,10 +18,10 @@ export const Signup = () => {
     setIsLoading(true);
     try {
       // 1. Create account
-      await api.post('/auth/signup', { username, email, password });
+      await api.post('auth/signup', { username, email, password });
       
       // 2. Automatically log in for a seamless experience
-      const { data } = await api.post('/auth/login', { email, password });
+      const { data } = await api.post('auth/login', { email, password });
       loginStore(data.user, data.token);
 
       toast.success('Account created! Welcome to the field.', {

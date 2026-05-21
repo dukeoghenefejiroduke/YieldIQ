@@ -16,7 +16,7 @@ export const Login = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const { data } = await api.post('/auth/login', { email, password });
+      const { data } = await api.post('auth/login', { email, password });
       loginStore(data.user, data.token);
       toast.success('Welcome back to the field!', {
         icon: '🌾',

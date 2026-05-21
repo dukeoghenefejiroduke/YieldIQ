@@ -11,7 +11,7 @@ export const useSync = () => {
         for (const log of pendingLogs) {
           try {
             // Include userId from Dexie/Auth store implicitly via the header-intercepted API call
-            await api.post('/logs', {
+            await api.post('logs', {
               transcription: log.transcription,
               timestamp: log.timestamp,
               location: log.location
