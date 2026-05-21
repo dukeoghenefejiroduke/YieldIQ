@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import toast from 'react-hot-toast';
+import { Mic, Square, Save, Play } from 'lucide-react';
 import { db } from '../db/db';
 import { useAuthStore } from '../store/authStore';
 
@@ -28,15 +29,20 @@ export const VoiceEntry = () => {
     recognition.start();
     recognitionRef.current = recognition;
     setIsRecording(true);
+    toast.success('Recording started...', { icon: '🎤' });
   };
 
   const stopRecording = () => {
     recognitionRef.current?.stop();
     setIsRecording(false);
+    toast('Recording stopped', { icon: '⏹️' });
   };
 
   const saveLog = async () => {
-    if (!transcript.trim()) return;
+    if (!transcript.trim()) {
+      toast.error('No transcript to save');
+      return;
+    }
     try {
       await db.logs.add({
         userId: user?.id,
@@ -45,7 +51,13 @@ export const VoiceEntry = () => {
         location: null,
         syncStatus: 'pending'
       });
-      toast.success('Log saved locally!');
+      toast.success('Log saved to field journal!', {
+        style: {
+          borderRadius: '12px',
+          background: '#1a3c1a',
+          color: '#fff',
+        },
+      });
       setTranscript('');
     } catch {
       toast.error('Failed to save log');
@@ -53,13 +65,48 @@ export const VoiceEntry = () => {
   };
 
   return (
-    <div className="p-4 border rounded shadow">
-      <textarea value={transcript} onChange={(e) => setTranscript(e.target.value)} className="w-full h-24 p-2 border" placeholder="Speak to record..." />
-      <div className="flex gap-2 mt-2">
-        <button onClick={isRecording ? stopRecording : startRecording} className={`p-2 rounded ${isRecording ? 'bg-red-500' : 'bg-green-500'} text-white`}>
-          {isRecording ? 'Stop Recording' : 'Start Recording'}
+    <div className="glass-card p-8 flex flex-col items-center gap-6 max-w-2xl mx-auto mt-10">
+      <div className="text-center">
+        <h2 className="text-2xl font-bold mb-2">Voice Journal</h2>
+        <p className="text-secondary">Capture observations instantly with AgroPulse AI.</p>
+      </div>
+
+      <div className="relative flex items-center justify-center w-full py-10">
+        {isRecording && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="w-32 h-32 bg-forest-mid rounded-full animate-ping opacity-20" />
+            <div className="w-48 h-48 bg-forest-light rounded-full animate-pulse opacity-10" />
+          </div>
+        )}
+        
+        <button
+          onClick={isRecording ? stopRecording : startRecording}
+          className={`relative z-10 w-24 h-24 rounded-full flex items-center justify-center shadow-xl transition-all duration-500 ${
+            isRecording ? 'bg-red-500 scale-110' : 'bg-forest-mid hover:bg-forest-light'
+          }`}
+        >
+          {isRecording ? <Square className="text-white w-10 h-10" /> : <Mic className="text-white w-10 h-10" />}
         </button>
-        <button onClick={saveLog} className="p-2 bg-blue-500 text-white rounded">Save</button>
+      </div>
+
+      <div className="w-full">
+        <textarea
+          value={transcript}
+          onChange={(e) => setTranscript(e.target.value)}
+          className="input-field h-40 resize-none text-lg leading-relaxed mb-4"
+          placeholder="Your voice transcription will appear here..."
+        />
+        
+        <div className="flex gap-4">
+          <button
+            onClick={saveLog}
+            disabled={!transcript.trim()}
+            className="flex-1 bg-forest-mid text-white py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-forest-deep disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+          >
+            <Save className="w-5 h-5" />
+            Save to Journal
+          </button>
+        </div>
       </div>
     </div>
   );
