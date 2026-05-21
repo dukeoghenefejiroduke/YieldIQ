@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "npm run build --prefix client && npm run build --prefix server",
+    "build": "npm run build --prefix client && npm run build --prefix server && ls -la client/dist",
     "postinstall": "npm install --prefix client && npm install --prefix server",
     "start": "node server/dist/index.js",
     "server": "npm run dev --prefix server",
