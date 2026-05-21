@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import authRoutes from './routes/authRoutes';
@@ -17,15 +18,21 @@ app.use(helmet({
   contentSecurityPolicy: false,
 }));
 app.use(express.json());
+
+// Broad CORS for production and dev
 app.use(cors({
-  origin: ['https://yieldiq.onrender.com', 'http://localhost:5173'],
+  origin: [
+    'https://yieldiq.onrender.com', 
+    'https://yieldiq2.onrender.com', 
+    'http://localhost:5173'
+  ],
   credentials: true
 }));
 
-// Rate Limiting
+// Rate Limiting - increased for smoother production experience
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 500, 
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -36,7 +43,7 @@ if (process.env.MONGO_URI) {
     .then(() => console.log('Connected to MongoDB'))
     .catch((err) => console.error('MongoDB connection error:', err));
 } else {
-  console.error('MONGO_URI is not defined. Database connection skipped.');
+  console.error('CRITICAL: MONGO_URI is not defined in environment variables.');
 }
 
 app.use('/api/auth', authRoutes);
@@ -44,36 +51,47 @@ app.use('/api/logs', logRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected' });
+  res.json({ 
+    status: 'ok', 
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    time: new Date().toISOString()
+  });
 });
 
-// Serve static assets in production
-// Since this file is in server/dist/index.js, we need to go up two levels to reach the root
-const clientDistPath = path.resolve(__dirname, '..', '..', 'client', 'dist');
-console.log('Current __dirname:', __dirname);
-console.log('Attempting to serve static files from:', clientDistPath);
+// Robust Static File Serving
+const possiblePaths = [
+  path.resolve(__dirname, '..', '..', 'client', 'dist'),
+  path.join(process.cwd(), 'client', 'dist'),
+  path.join(process.cwd(), '..', 'client', 'dist'),
+  '/opt/render/project/src/client/dist'
+];
 
-if (require('fs').existsSync(clientDistPath)) {
+let clientDistPath = '';
+for (const p of possiblePaths) {
+  if (fs.existsSync(p)) {
+    clientDistPath = p;
+    console.log('SUCCESS: Found client/dist at:', p);
+    break;
+  } else {
+    console.log('Checked path (not found):', p);
+  }
+}
+
+if (clientDistPath) {
   app.use(express.static(clientDistPath));
 } else {
-  // Fallback for different deployment structures
-  const fallbackPath = path.join(process.cwd(), '..', 'client', 'dist');
-  console.log('Primary path failed. Trying fallback:', fallbackPath);
-  if (require('fs').existsSync(fallbackPath)) {
-    app.use(express.static(fallbackPath));
-  } else {
-    console.error('CRITICAL: client/dist directory not found!');
-  }
+  console.error('CRITICAL ERROR: Could not locate client/dist directory in any expected location.');
 }
 
 // Catch-all route using Regex to serve index.html for any non-API route
 app.get(/^((?!\/api).)*$/, (req, res) => {
-  const indexPath = path.join(clientDistPath, 'index.html');
-  if (require('fs').existsSync(indexPath)) {
-    res.sendFile(indexPath);
-  } else {
-    res.status(404).send('Frontend build not found. Please ensure "npm run build" has completed.');
+  if (clientDistPath) {
+    const indexPath = path.join(clientDistPath, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      return res.sendFile(indexPath);
+    }
   }
+  res.status(404).send('<h1>Frontend build not found</h1><p>Please check the deployment logs to verify the build process.</p>');
 });
 
 const PORT = process.env.PORT || 5000;
