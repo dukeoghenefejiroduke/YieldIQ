@@ -42,6 +42,11 @@ if (process.env.MONGO_URI) {
 app.use('/api/auth', authRoutes);
 app.use('/api/logs', logRoutes);
 
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected' });
+});
+
 // Serve static assets in production
 const clientDistPath = path.resolve(__dirname, '../../client/dist');
 app.use(express.static(clientDistPath));
