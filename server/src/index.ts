@@ -48,13 +48,22 @@ app.get('/api/health', (req, res) => {
 });
 
 // Serve static assets in production
-const clientDistPath = path.join(process.cwd(), 'client', 'dist');
-console.log('Serving static files from:', clientDistPath);
+// Since this file is in server/dist/index.js, we need to go up two levels to reach the root
+const clientDistPath = path.resolve(__dirname, '..', '..', 'client', 'dist');
+console.log('Current __dirname:', __dirname);
+console.log('Attempting to serve static files from:', clientDistPath);
 
 if (require('fs').existsSync(clientDistPath)) {
   app.use(express.static(clientDistPath));
 } else {
-  console.error('Warning: client/dist directory not found at', clientDistPath);
+  // Fallback for different deployment structures
+  const fallbackPath = path.join(process.cwd(), '..', 'client', 'dist');
+  console.log('Primary path failed. Trying fallback:', fallbackPath);
+  if (require('fs').existsSync(fallbackPath)) {
+    app.use(express.static(fallbackPath));
+  } else {
+    console.error('CRITICAL: client/dist directory not found!');
+  }
 }
 
 // Catch-all route using Regex to serve index.html for any non-API route
