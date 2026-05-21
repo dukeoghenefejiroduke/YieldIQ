@@ -63,17 +63,22 @@ const possiblePaths = [
   path.resolve(__dirname, '..', '..', 'client', 'dist'),
   path.join(process.cwd(), 'client', 'dist'),
   path.join(process.cwd(), '..', 'client', 'dist'),
-  '/opt/render/project/src/client/dist'
+  path.join('/opt/render/project/src', 'client', 'dist'),
+  path.join(__dirname, '..', 'client', 'dist')
 ];
 
 let clientDistPath = '';
 for (const p of possiblePaths) {
-  if (fs.existsSync(p)) {
-    clientDistPath = p;
-    console.log('SUCCESS: Found client/dist at:', p);
-    break;
-  } else {
-    console.log('Checked path (not found):', p);
+  try {
+    if (fs.existsSync(p) && fs.readdirSync(p).length > 0) {
+      clientDistPath = p;
+      console.log('SUCCESS: Found non-empty client/dist at:', p);
+      break;
+    } else {
+      console.log('Checked path (not found or empty):', p);
+    }
+  } catch (e) {
+    console.log('Error checking path:', p, e);
   }
 }
 
