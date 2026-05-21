@@ -99,6 +99,17 @@ app.get(/^((?!\/api).)*$/, (req, res) => {
   res.status(404).send('<h1>Frontend build not found</h1><p>Please check the deployment logs to verify the build process.</p>');
 });
 
+// Final fallback for any other unmatched requests
+app.use((req, res) => {
+  if (clientDistPath) {
+    const indexPath = path.join(clientDistPath, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      return res.sendFile(indexPath);
+    }
+  }
+  res.status(404).send('Not Found');
+});
+
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
