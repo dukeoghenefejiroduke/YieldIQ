@@ -4,14 +4,40 @@ import { Mic, Square, Save } from 'lucide-react';
 import { db } from '../db/db';
 import { useAuthStore } from '../store/authStore';
 
+interface SpeechRecognitionEventLike {
+  resultIndex: number;
+  results: {
+    length: number;
+    [index: number]: {
+      [index: number]: {
+        transcript: string;
+      };
+    };
+  };
+}
+
+interface SpeechRecognitionLike {
+  continuous: boolean;
+  interimResults: boolean;
+  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
+  start: () => void;
+  stop: () => void;
+}
+
+type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
+
 export const VoiceEntry = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const { user } = useAuthStore();
 
   const startRecording = () => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const speechWindow = window as Window & {
+      SpeechRecognition?: SpeechRecognitionConstructor;
+      webkitSpeechRecognition?: SpeechRecognitionConstructor;
+    };
+    const SpeechRecognition = speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition;
     if (!SpeechRecognition) {
       toast.error('Browser does not support voice recognition');
       return;
@@ -19,7 +45,7 @@ export const VoiceEntry = () => {
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (event) => {
       let currentTranscript = '';
       for (let i = event.resultIndex; i < event.results.length; ++i) {
         currentTranscript += event.results[i][0].transcript;
@@ -43,9 +69,13 @@ export const VoiceEntry = () => {
       toast.error('No transcript to save');
       return;
     }
+    if (!user?.id) {
+      toast.error('Please sign in before saving logs');
+      return;
+    }
     try {
       await db.logs.add({
-        userId: user?.id,
+        userId: user.id,
         transcription: transcript,
         timestamp: Date.now(),
         location: null,

@@ -44,17 +44,26 @@ exports.signup = signup;
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
+        console.log(`Login attempt for email: ${email}`);
         const user = await User_1.default.findOne({ email }).select('+password');
-        if (!user || !(await bcryptjs_1.default.compare(password, user.password))) {
+        if (!user) {
+            console.log(`User not found: ${email}`);
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+        const isMatch = await bcryptjs_1.default.compare(password, user.password);
+        if (!isMatch) {
+            console.log(`Password mismatch for user: ${email}`);
             return res.status(401).json({ error: 'Invalid credentials' });
         }
         if (!process.env.JWT_SECRET) {
             throw new Error('JWT_SECRET is not defined in environment variables');
         }
         const token = jsonwebtoken_1.default.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        console.log(`Login successful for: ${email}`);
         res.json({ token, user: { id: user._id, username: user.username, email: user.email } });
     }
     catch (error) {
+        console.error('Error logging in:', error);
         res.status(500).json({ error: 'Error logging in' });
     }
 };

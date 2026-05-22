@@ -19,13 +19,30 @@ app.use(helmet({
 }));
 app.use(express.json());
 
-// Broad CORS for production and dev
+const corsOrigins = [
+  process.env.FRONTEND_URL,
+  ...(process.env.CORS_ORIGINS?.split(',') || []),
+  'https://yieldiq.onrender.com',
+  'https://yieldiq2.onrender.com',
+  'http://localhost:5173',
+].filter((origin): origin is string => Boolean(origin));
+
+const allowedOrigins = new Set(corsOrigins.map((origin) => origin.trim().replace(/\/$/, '')));
+
+// Allow the static frontend domain plus local development.
 app.use(cors({
-  origin: [
-    'https://yieldiq.onrender.com', 
-    'https://yieldiq2.onrender.com', 
-    'http://localhost:5173'
-  ],
+  origin: (origin, callback) => {
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    const normalizedOrigin = origin.replace(/\/$/, '');
+    if (allowedOrigins.has(normalizedOrigin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`CORS blocked origin: ${origin}`));
+  },
   credentials: true
 }));
 

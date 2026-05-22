@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { isAxiosError } from 'axios';
 import toast from 'react-hot-toast';
 import { Mail, Lock, User, CheckCircle } from 'lucide-react';
 import api from '../services/api';
@@ -30,9 +31,11 @@ export const Signup = () => {
       });
       
       navigate('/dashboard');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Signup/Auto-login error:', error);
-      const message = error.response?.data?.error || 'Account creation failed. Please try again.';
+      const message = isAxiosError<{ error?: string }>(error)
+        ? error.response?.data?.error || 'Account creation failed. Please try again.'
+        : 'Account creation failed. Please try again.';
       toast.error(message);
     } finally {
       setIsLoading(false);

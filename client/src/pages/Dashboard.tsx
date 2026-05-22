@@ -7,9 +7,15 @@ import { LogOut, LayoutDashboard, History, Settings, Cloud } from 'lucide-react'
 import api from '../services/api';
 import toast from 'react-hot-toast';
 
+interface CloudLog {
+  _id: string;
+  timestamp: string | number | Date;
+  transcription: string;
+}
+
 export const Dashboard = () => {
   const { user, logout } = useAuthStore();
-  const [logs, setLogs] = useState([]);
+  const [logs, setLogs] = useState<CloudLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('journal');
 
@@ -94,7 +100,7 @@ export const Dashboard = () => {
                 </div>
               ) : (
                 <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
-                  {logs.map((log: any) => (
+                  {logs.map((log) => (
                     <div key={log._id} className="p-4 bg-nature-bg rounded-xl border border-glass-border hover:border-forest-light transition-all cursor-pointer group">
                       <div className="flex justify-between items-start mb-2">
                         <span className="text-xs font-bold text-forest-mid opacity-60">
