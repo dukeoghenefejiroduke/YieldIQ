@@ -23,7 +23,7 @@ services:
       - key: NODE_VERSION
         value: 22.12.0
       - key: VITE_API_BASE_URL
-        value: https://yieldiq2.onrender.com
+        value: https://yieldiq2.onrender.com/api
     routes:
       - type: rewrite
         source: /*
