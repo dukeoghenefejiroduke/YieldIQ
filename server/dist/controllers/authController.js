@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = exports.signup = void 0;
+exports.getMe = exports.login = exports.signup = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const User_1 = __importDefault(require("../models/User"));
@@ -68,4 +68,19 @@ const login = async (req, res) => {
     }
 };
 exports.login = login;
+const getMe = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const user = await User_1.default.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.json({ id: user._id, username: user.username, email: user.email });
+    }
+    catch (error) {
+        console.error('GetMe error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+exports.getMe = getMe;
 //# sourceMappingURL=authController.js.map

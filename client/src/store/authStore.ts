@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 export interface AuthUser {
   id: string;
@@ -10,36 +11,40 @@ export interface AuthUser {
 interface AuthState {
   user: AuthUser | null;
   token: string | null;
+  isAuthenticated: boolean;
+  isInitializing: boolean;
   login: (user: AuthUser, token: string) => void;
   logout: () => void;
+  setInitializing: (initializing: boolean) => void;
 }
 
-const getSafeUser = () => {
-  try {
-    const user = localStorage.getItem('user');
-    if (!user || user === 'undefined') return null;
-    return JSON.parse(user);
-  } catch (error) {
-    console.error('Failed to parse user from localStorage:', error);
-    return null;
-  }
-};
-
-export const useAuthStore = create<AuthState>((set) => ({
-  user: getSafeUser(),
-  token: localStorage.getItem('token') || null,
-  login: (user, token) => {
-    if (!user || !token) {
-      console.warn('Attempted to login with invalid user or token');
-      return;
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      isInitializing: true,
+      login: (user, token) => {
+        set({ user, token, isAuthenticated: true, isInitializing: false });
+      },
+      logout: () => {
+        set({ user: null, token: null, isAuthenticated: false, isInitializing: false });
+      },
+      setInitializing: (isInitializing) => set({ isInitializing }),
+    }),
+    {
+      name: 'agropulse-auth-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ 
+        user: state.user, 
+        token: state.token,
+        isAuthenticated: !!state.token 
+      }),
+      onRehydrateStorage: () => (state) => {
+        // After rehydration, we'll start verification in the background
+        if (state) state.setInitializing(true);
+      },
     }
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
-    set({ user, token });
-  },
-  logout: () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    set({ user: null, token: null });
-  },
-}));
+  )
+);

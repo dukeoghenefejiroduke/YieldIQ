@@ -71,3 +71,17 @@ export const login = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Error logging in' });
   }
 };
+
+export const getMe = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.userId;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json({ id: user._id, username: user.username, email: user.email });
+  } catch (error) {
+    console.error('GetMe error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};

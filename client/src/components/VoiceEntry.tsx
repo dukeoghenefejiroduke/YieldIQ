@@ -1,8 +1,8 @@
 import { useState, useRef } from 'react';
 import toast from 'react-hot-toast';
-import { Mic, Square, Save } from 'lucide-react';
-import { db } from '../db/db';
+import { Mic, Square, Save, MapPin } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
+import { useLogStore } from '../store/logStore';
 
 interface SpeechRecognitionEventLike {
   resultIndex: number;
@@ -29,10 +29,37 @@ type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
 export const VoiceEntry = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
+  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
+  
   const { user } = useAuthStore();
+  const addLocalLog = useLogStore((state) => state.addLocalLog);
+
+  const fetchLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error('Geolocation not supported');
+      return;
+    }
+
+    setIsFetchingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setIsFetchingLocation(false);
+        toast.success('Location tagged', { icon: '📍' });
+      },
+      (err) => {
+        console.error('Location error:', err);
+        setIsFetchingLocation(false);
+        toast.error('Could not fetch location');
+      },
+      { enableHighAccuracy: true, timeout: 5000 }
+    );
+  };
 
   const startRecording = () => {
+    // ... (SpeechRecognition init remains same)
     const speechWindow = window as Window & {
       SpeechRecognition?: SpeechRecognitionConstructor;
       webkitSpeechRecognition?: SpeechRecognitionConstructor;
@@ -47,7 +74,7 @@ export const VoiceEntry = () => {
     recognition.interimResults = true;
     recognition.onresult = (event) => {
       let currentTranscript = '';
-      for (let i = event.resultIndex; i < event.results.length; ++i) {
+      for (let i = 0; i < event.results.length; ++i) {
         currentTranscript += event.results[i][0].transcript;
       }
       setTranscript(currentTranscript);
@@ -55,6 +82,10 @@ export const VoiceEntry = () => {
     recognition.start();
     recognitionRef.current = recognition;
     setIsRecording(true);
+    
+    // Auto-fetch location when recording starts
+    if (!location) fetchLocation();
+    
     toast.success('Recording started...', { icon: '🎤' });
   };
 
@@ -74,22 +105,22 @@ export const VoiceEntry = () => {
       return;
     }
     try {
-      await db.logs.add({
+      await addLocalLog({
         userId: user.id,
         transcription: transcript,
         timestamp: Date.now(),
-        location: null,
-        syncStatus: 'pending'
+        location
       });
+      
       toast.success('Log saved to field journal!', {
-        style: {
-          borderRadius: '12px',
-          background: '#1a3c1a',
-          color: '#fff',
-        },
+        icon: '🌾',
+        style: { borderRadius: '12px', background: '#1a3c1a', color: '#fff' }
       });
+      
       setTranscript('');
-    } catch {
+      setLocation(null);
+    } catch (err) {
+      console.error('Save error:', err);
       toast.error('Failed to save log');
     }
   };
@@ -119,7 +150,21 @@ export const VoiceEntry = () => {
         </button>
       </div>
 
-      <div className="w-full">
+      <div className="w-full space-y-4">
+        <div className="flex items-center justify-between px-2">
+          <span className="text-sm font-semibold flex items-center gap-2 text-secondary">
+            <MapPin className={`w-4 h-4 ${location ? 'text-forest-mid' : 'text-gray-300'}`} />
+            {location ? `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}` : 'No location tagged'}
+          </span>
+          <button 
+            onClick={fetchLocation}
+            disabled={isFetchingLocation}
+            className="text-xs font-bold text-forest-mid hover:underline disabled:opacity-50"
+          >
+            {isFetchingLocation ? 'Locating...' : 'Refresh GPS'}
+          </button>
+        </div>
+
         <textarea
           value={transcript}
           onChange={(e) => setTranscript(e.target.value)}

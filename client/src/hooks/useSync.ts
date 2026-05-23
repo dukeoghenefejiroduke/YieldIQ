@@ -1,32 +1,22 @@
 import { useEffect } from 'react';
-import { db } from '../db/db';
-import api from '../services/api';
+import { useLogStore } from '../store/logStore';
 
 export const useSync = () => {
+  const syncLogs = useLogStore((state) => state.syncLogs);
+
   useEffect(() => {
-    const handleSync = async () => {
-      if (navigator.onLine) {
-        const pendingLogs = await db.logs.where('syncStatus').equals('pending').toArray();
-        
-        for (const log of pendingLogs) {
-          try {
-            // Include userId from Dexie/Auth store implicitly via the header-intercepted API call
-            await api.post('logs', {
-              transcription: log.transcription,
-              timestamp: log.timestamp,
-              location: log.location
-            });
-            await db.logs.update(log.id!, { syncStatus: 'synced' });
-          } catch (err) {
-            console.error('Failed to sync log:', err);
-          }
-        }
-      }
+    // Initial sync
+    syncLogs();
+
+    // Sync when coming back online
+    window.addEventListener('online', syncLogs);
+
+    // Periodic background sync every 5 minutes
+    const interval = setInterval(syncLogs, 5 * 60 * 1000);
+
+    return () => {
+      window.removeEventListener('online', syncLogs);
+      clearInterval(interval);
     };
-
-    window.addEventListener('online', handleSync);
-    handleSync();
-
-    return () => window.removeEventListener('online', handleSync);
-  }, []);
+  }, [syncLogs]);
 };

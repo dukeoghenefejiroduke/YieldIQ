@@ -1,38 +1,24 @@
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '../store/authStore';
+import { useLogStore } from '../store/logStore';
 import { StatsView } from '../components/StatsView';
 import { VoiceEntry } from '../components/VoiceEntry';
 import { ConnectionStatus } from '../components/ui/ConnectionStatus';
-import { LogOut, LayoutDashboard, History, Settings, Cloud } from 'lucide-react';
-import api from '../services/api';
-import toast from 'react-hot-toast';
-
-interface CloudLog {
-  _id: string;
-  timestamp: string | number | Date;
-  transcription: string;
-}
+import { LogOut, LayoutDashboard, History, Settings, Cloud, CloudOff, RefreshCw } from 'lucide-react';
+import { useSync } from '../hooks/useSync';
 
 export const Dashboard = () => {
   const { user, logout } = useAuthStore();
-  const [logs, setLogs] = useState<CloudLog[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { logs, fetchLogs, isLoading, isSyncing } = useLogStore();
   const [activeTab, setActiveTab] = useState('journal');
 
+  useSync();
+
   useEffect(() => {
-    const fetchLogs = async () => {
-      try {
-        const { data } = await api.get('logs');
-        setLogs(data);
-      } catch (error) {
-        console.error('Fetch logs error:', error);
-        toast.error('Could not refresh cloud data');
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchLogs();
-  }, []);
+  }, [fetchLogs]);
+
+  const pendingCount = logs.filter(l => l.syncStatus === 'pending').length;
 
   return (
     <div className="min-h-screen pb-24">
@@ -64,12 +50,20 @@ export const Dashboard = () => {
 
       {/* Main Content Area */}
       <main className="mt-28 max-w-7xl mx-auto px-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
-        <header className="mb-10 text-left">
-          <h1 className="text-4xl mb-2">Field Command Center</h1>
-          <p className="text-secondary text-lg">Real-time agricultural intelligence and voice logging.</p>
+        <header className="mb-10 text-left flex justify-between items-end">
+          <div>
+            <h1 className="text-4xl mb-2 text-forest-deep dark:text-forest-light">Field Command Center</h1>
+            <p className="text-secondary text-lg">Real-time agricultural intelligence and voice logging.</p>
+          </div>
+          {isSyncing && (
+            <div className="flex items-center gap-2 text-forest-mid font-bold animate-pulse">
+              <RefreshCw className="w-4 h-4 animate-spin" />
+              <span className="text-sm">Syncing...</span>
+            </div>
+          )}
         </header>
 
-        <StatsView logsCount={logs.length} pendingCount={0} />
+        <StatsView logsCount={logs.length} pendingCount={pendingCount} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Voice Entry - Primary Action */}
@@ -79,18 +73,24 @@ export const Dashboard = () => {
 
           {/* Activity Feed / History */}
           <div className="space-y-6">
-            <div className="glass-card p-6 h-full">
+            <div className="glass-card p-6 h-[700px] flex flex-col">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-bold flex items-center gap-2">
                   <History className="w-5 h-5 text-forest-mid" /> History
                 </h3>
-                <span className="text-xs font-bold px-2 py-1 bg-forest-light/10 text-forest-mid rounded-full">Recent</span>
+                <button 
+                  onClick={() => fetchLogs()} 
+                  className="p-2 hover:bg-forest-light/10 rounded-full transition-colors"
+                  disabled={isLoading}
+                >
+                  <RefreshCw className={`w-4 h-4 text-forest-mid ${isLoading ? 'animate-spin' : ''}`} />
+                </button>
               </div>
 
-              {loading ? (
+              {isLoading && logs.length === 0 ? (
                 <div className="space-y-4">
-                  {[1, 2, 3].map((n) => (
-                    <div key={n} className="h-20 bg-gray-100 rounded-xl animate-pulse" />
+                  {[1, 2, 3, 4].map((n) => (
+                    <div key={n} className="h-24 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse" />
                   ))}
                 </div>
               ) : logs.length === 0 ? (
@@ -99,16 +99,26 @@ export const Dashboard = () => {
                   <p className="text-secondary">No observations recorded yet.</p>
                 </div>
               ) : (
-                <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar flex-1">
                   {logs.map((log) => (
-                    <div key={log._id} className="p-4 bg-nature-bg rounded-xl border border-glass-border hover:border-forest-light transition-all cursor-pointer group">
+                    <div key={log._id || log.id} className="p-4 bg-nature-bg rounded-xl border border-glass-border hover:border-forest-light transition-all cursor-pointer group relative">
                       <div className="flex justify-between items-start mb-2">
                         <span className="text-xs font-bold text-forest-mid opacity-60">
                           {new Date(log.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                         </span>
-                        <div className="w-2 h-2 rounded-full bg-forest-light shadow-[0_0_8px_rgba(76,140,74,0.5)]" />
+                        {log.syncStatus === 'pending' ? (
+                          <CloudOff className="w-4 h-4 text-amber-500" />
+                        ) : (
+                          <Cloud className="w-4 h-4 text-forest-light" />
+                        )}
                       </div>
                       <p className="text-sm line-clamp-2 group-hover:line-clamp-none transition-all">{log.transcription}</p>
+                      {log.location && (
+                        <div className="mt-2 text-[10px] font-mono text-secondary flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-forest-mid" />
+                          {log.location.lat.toFixed(4)}, {log.location.lng.toFixed(4)}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -118,7 +128,7 @@ export const Dashboard = () => {
         </div>
       </main>
 
-      {/* Floating Bottom Nav (Mobile/Premium feel) */}
+      {/* Floating Bottom Nav */}
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 p-2 glass-card rounded-2xl shadow-2xl border-forest-light/20 z-40">
         <button
           onClick={() => setActiveTab('journal')}
