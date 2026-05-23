@@ -23,7 +23,6 @@ app.use(express_1.default.json());
 const corsOrigins = [
     process.env.FRONTEND_URL,
     ...(process.env.CORS_ORIGINS?.split(',') || []),
-    'https://agrovoice.onrender.com',
     'https://yieldiq.onrender.com',
     'https://yieldiq2.onrender.com',
     'http://localhost:5173',
@@ -58,6 +57,7 @@ if (process.env.MONGO_URI) {
 }
 else {
     console.error('CRITICAL: MONGO_URI is not defined in environment variables.');
+    process.exit(1);
 }
 app.use('/api/auth', authRoutes_1.default);
 app.use('/api/logs', logRoutes_1.default);

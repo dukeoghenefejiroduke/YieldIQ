@@ -61,6 +61,7 @@ if (process.env.MONGO_URI) {
     .catch((err) => console.error('MongoDB connection error:', err));
 } else {
   console.error('CRITICAL: MONGO_URI is not defined in environment variables.');
+  process.exit(1);
 }
 
 app.use('/api/auth', authRoutes);
