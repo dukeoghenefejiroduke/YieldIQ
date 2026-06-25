@@ -7,9 +7,9 @@
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "commonjs",
+    "module": "NodeNext",
     "target": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
     "ignoreDeprecations": "6.0",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -29,5 +29,6 @@
     "strict": true,
     "jsx": "react-jsx",
     "skipLibCheck": true,
-  }
+  },
+  "exclude": ["node_modules", "dist", "vitest.config.ts"]
 }

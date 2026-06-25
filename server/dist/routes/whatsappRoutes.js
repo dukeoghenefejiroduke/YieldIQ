@@ -1,12 +1,7 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const whatsappController_1 = require("../controllers/whatsappController");
-const router = express_1.default.Router();
-router.get('/webhook', whatsappController_1.verifyWebhook);
-router.post('/webhook', whatsappController_1.handleMessage);
-exports.default = router;
+import express from 'express';
+import { verifyWebhook, handleMessage } from '../controllers/whatsappController.js';
+const router = express.Router();
+router.get('/webhook', verifyWebhook);
+router.post('/webhook', handleMessage);
+export default router;
 //# sourceMappingURL=whatsappRoutes.js.map

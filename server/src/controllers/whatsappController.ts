@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import crypto from 'crypto';
-import Log from '../models/Log';
-import Farmer from '../models/Farmer';
+import Log from '../models/Log.js';
+import Farmer from '../models/Farmer.js';
 
 // Verify WhatsApp webhook signature
 const verifySignature = (payload: string, signature: string) => {

@@ -1,0 +1,1 @@
+{"version":3,"file":"priceAggregatorService.d.ts","sourceRoot":"","sources":["../../src/services/priceAggregatorService.ts"],"names":[],"mappings":"AAAA,MAAM,WAAW,WAAW;IAC1B,IAAI,EAAE,MAAM,CAAC;IACb,KAAK,EAAE,MAAM,CAAC;IACd,IAAI,EAAE,MAAM,CAAC;IACb,MAAM,EAAE,MAAM,CAAC;CAChB;AAED,eAAO,MAAM,sBAAsB;uBACR,OAAO,CAAC,WAAW,EAAE,CAAC;CAahD,CAAC"}

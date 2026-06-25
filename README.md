@@ -13,9 +13,11 @@ AgroVoice provides a seamless, **offline-first digital ledger** that works in ru
 
 ### Key Features
 *   **Offline-First:** Built on `Dexie.js`/SQLite to ensure no data loss in areas with poor internet.
-*   **Local AI Input:** Uses `Transformers.js` to parse voice/text transactions locally in local languages (Izon, Epie, Ogbia, Nembe).
-*   **Cooperative Credit Scoring:** KYC and transactional history build digital identities for farmers within cooperatives, enabling formal credit.
-*   **WhatsApp & OPay Integration:** Automated invoicing and payment confirmation via accessible channels.
+*   **Local AI Input:** Uses `Transformers.js` to parse voice/text transactions locally.
+*   **Dynamic Fintech Core:** Multi-modal credit scoring based on transactional history and cooperative participation.
+*   **Payment Integration:** Extensible payment gateway abstraction (Paystack/Flutterwave).
+*   **Accessibility (USSD):** USSD fallback for feature phones, enabling credit checking, market price queries, and transaction logging.
+*   **Market Intelligence:** Real-time price aggregation service for crops.
 
 ## Architecture
 ```mermaid

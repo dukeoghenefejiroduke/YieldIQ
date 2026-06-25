@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
-import Log from '../models/Log';
+import Log from '../models/Log.js';
 
 const LogSchema = z.object({
   transcription: z.string().min(1),

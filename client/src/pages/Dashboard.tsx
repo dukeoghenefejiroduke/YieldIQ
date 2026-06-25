@@ -4,22 +4,29 @@ import { useLogStore } from '../store/logStore';
 import { StatsView } from '../components/StatsView';
 import { VoiceEntry } from '../components/VoiceEntry';
 import { ConnectionStatus } from '../components/ui/ConnectionStatus';
-import { LogOut, LayoutDashboard, History, Settings, Cloud, CloudOff, RefreshCw } from 'lucide-react';
+import { LogOut, LayoutDashboard, History, Settings, Cloud, CloudOff, RefreshCw, DollarSign } from 'lucide-react';
 import { useSync } from '../hooks/useSync';
+import { getFarmerProfile } from '../services/farmerService';
+import { getMarketPrices } from '../services/marketService';
 
 export const Dashboard = () => {
   const { user, logout } = useAuthStore();
   const { logs, fetchLogs, isLoading, isSyncing } = useLogStore();
   const [activeTab, setActiveTab] = useState('journal');
   const [activeLogId, setActiveLogId] = useState<string | null>(null);
+  const [farmer, setFarmer] = useState<any>(null);
+  const [prices, setPrices] = useState<any[]>([]);
 
   useSync();
 
   useEffect(() => {
     fetchLogs();
+    getFarmerProfile().then(setFarmer).catch(console.error);
+    getMarketPrices().then(setPrices).catch(console.error);
   }, [fetchLogs]);
 
   const pendingCount = logs.filter(l => l.syncStatus === 'pending').length;
+  const creditScore = farmer?.creditScore || 0;
 
   return (
     <div className="min-h-screen pb-24">
@@ -43,6 +50,7 @@ export const Dashboard = () => {
             onClick={logout}
             className="p-3 hover:bg-red-50 text-red-500 rounded-xl transition-colors"
             title="Logout"
+            aria-label="Logout"
           >
             <LogOut className="w-6 h-6" />
           </button>
@@ -54,7 +62,10 @@ export const Dashboard = () => {
         <header className="mb-10 text-left flex justify-between items-end">
           <div>
             <h1 className="text-4xl mb-2 text-forest-deep dark:text-forest-light">Field Command Center</h1>
-            <p className="text-text-secondary text-lg">Real-time agricultural intelligence and voice logging.</p>
+            <p className="text-text-secondary text-lg">
+                Welcome, {farmer?.name || user?.username}. 
+                <span className="ml-4 font-bold text-forest-mid">Credit Score: {creditScore}</span>
+            </p>
           </div>
           {isSyncing && (
             <div className="flex items-center gap-2 text-forest-mid font-bold animate-pulse">
@@ -70,7 +81,23 @@ export const Dashboard = () => {
           {/* Voice Entry - Primary Action */}
           <div className="lg:col-span-2 space-y-8">
             <VoiceEntry />
+            
+            {/* Market Prices Section */}
+            <div className="glass-card p-6">
+                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                    <DollarSign className="w-5 h-5 text-forest-mid" /> Real-time Market Prices
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                    {prices.map((p, i) => (
+                        <div key={i} className="bg-nature-bg p-3 rounded-lg border border-glass-border">
+                            <p className="font-bold">{p.crop}</p>
+                            <p className="text-sm">₦{p.price} / {p.unit}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
           </div>
+...
 
           {/* Activity Feed / History */}
           <div className="space-y-6">
@@ -83,6 +110,7 @@ export const Dashboard = () => {
                   onClick={() => fetchLogs()} 
                   className="p-2 hover:bg-forest-light/10 rounded-full transition-colors"
                   disabled={isLoading}
+                  aria-label="Refresh logs"
                 >
                   <RefreshCw className={`w-4 h-4 text-forest-mid ${isLoading ? 'animate-spin' : ''}`} />
                 </button>
@@ -106,12 +134,15 @@ export const Dashboard = () => {
                     return (
                       <div 
                         key={logId} 
-                        onClick={() => setActiveLogId(logId)}
+                        onClick={() => setActiveLogId(String(logId))}
                         className={`p-4 bg-nature-bg rounded-xl border transition-all cursor-pointer group relative ${
                           activeLogId === logId 
                             ? 'border-forest-mid ring-2 ring-forest-mid/20' 
                             : 'border-glass-border hover:border-forest-light'
                         }`}
+                        role="button"
+                        aria-pressed={activeLogId === logId}
+                        aria-label="View log entry"
                       >
                         <div className="flex justify-between items-start mb-2">
                           <span className="text-xs font-bold text-forest-mid opacity-60">
@@ -147,6 +178,7 @@ export const Dashboard = () => {
           className={`flex items-center gap-2 px-6 py-3 rounded-xl transition-all ${
             activeTab === 'journal' ? 'bg-forest-mid text-white shadow-lg' : 'hover:bg-forest-light/10 text-text-secondary'
           }`}
+          aria-label="Journal command"
         >
           <LayoutDashboard className="w-5 h-5" />
           <span className="font-bold hidden sm:inline">Command</span>
@@ -156,6 +188,7 @@ export const Dashboard = () => {
           className={`flex items-center gap-2 px-6 py-3 rounded-xl transition-all ${
             activeTab === 'settings' ? 'bg-forest-mid text-white shadow-lg' : 'hover:bg-forest-light/10 text-text-secondary'
           }`}
+          aria-label="Settings"
         >
           <Settings className="w-5 h-5" />
           <span className="font-bold hidden sm:inline">Settings</span>
