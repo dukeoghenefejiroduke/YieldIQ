@@ -4,24 +4,36 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getLogs = exports.createLog = void 0;
+const zod_1 = require("zod");
 const Log_1 = __importDefault(require("../models/Log"));
+const LogSchema = zod_1.z.object({
+    transcription: zod_1.z.string().min(1),
+    type: zod_1.z.enum(['sale', 'purchase', 'credit']),
+    amount: zod_1.z.number().positive(),
+    item: zod_1.z.string().min(1),
+    timestamp: zod_1.z.number().optional(),
+    location: zod_1.z.object({
+        lat: zod_1.z.number(),
+        lng: zod_1.z.number()
+    }).optional(),
+    farmerId: zod_1.z.string().optional()
+});
 const createLog = async (req, res) => {
     try {
-        const { transcription, timestamp, location } = req.body;
-        if (!transcription) {
-            return res.status(400).json({ error: 'Transcription is required' });
-        }
+        const validatedData = LogSchema.parse(req.body);
         const userId = req.user.userId;
         const newLog = new Log_1.default({
             userId,
-            transcription,
-            timestamp: timestamp || Date.now(),
-            location
+            ...validatedData,
+            timestamp: validatedData.timestamp || Date.now()
         });
         await newLog.save();
         res.status(201).json(newLog);
     }
     catch (error) {
+        if (error instanceof zod_1.z.ZodError) {
+            return res.status(400).json({ error: 'Invalid transaction data', details: error.issues });
+        }
         console.error('Create log error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }

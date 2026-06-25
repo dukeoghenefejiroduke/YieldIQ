@@ -41,10 +41,6 @@ export const useAuthStore = create<AuthState>()(
         token: state.token,
         isAuthenticated: !!state.token 
       }),
-      onRehydrateStorage: () => (state) => {
-        // After rehydration, we'll start verification in the background
-        if (state) state.setInitializing(true);
-      },
     }
   )
 );

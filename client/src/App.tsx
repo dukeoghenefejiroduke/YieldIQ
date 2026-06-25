@@ -10,36 +10,44 @@ import { useAuth } from './hooks/useAuth';
 import { Loader2 } from 'lucide-react';
 import './App.css';
 
-function App() {
+function AppShell() {
   const { verifySession, isInitializing } = useAuth();
 
   useEffect(() => {
     verifySession();
-  }, []);
+  }, [verifySession]);
 
   if (isInitializing) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-nature-bg">
+      <div className="fixed inset-0 flex flex-col items-center justify-center gap-4 bg-white/90 z-50">
         <Loader2 className="w-12 h-12 text-forest-mid animate-spin" />
-        <p className="text-forest-deep font-medium animate-pulse">Initializing AgroPulse...</p>
+        <p className="text-forest-deep font-medium">Initializing...</p>
       </div>
     );
   }
 
   return (
+    <>
+      <Toaster position="top-center" />
+      <Routes>
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      </Routes>
+    </>
+  );
+}
+
+function App() {
+  return (
     <ErrorBoundary>
       <Router>
-        <Toaster position="top-center" />
-        <Routes>
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
+        <AppShell />
       </Router>
     </ErrorBoundary>
   );

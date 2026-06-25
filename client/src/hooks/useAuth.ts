@@ -1,34 +1,53 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../services/api';
 import { useAuthStore } from '../store/authStore';
 import { parseApiError } from '../utils/errors';
 
+interface LocationState {
+  from?: {
+    pathname: string;
+  };
+}
+
+interface SignupPayload {
+  username?: string;
+  email?: string;
+  password?: string;
+}
+
 export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { login: setLogin, logout: setLogout, user, isAuthenticated, isInitializing, setInitializing } = useAuthStore();
+  const { user, isAuthenticated, isInitializing } = useAuthStore();
+  const { login: setLogin, logout: setLogout, setInitializing } = useAuthStore.getState();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const verifySession = async () => {
+  const verifySession = useCallback(async () => {
+    toast('Verifying session...');
     const token = useAuthStore.getState().token;
     if (!token) {
+      toast('No token, stopping init.');
       setInitializing(false);
       return;
     }
 
     try {
+      toast('Fetching user data...');
       const { data } = await api.get('auth/me');
       // Update user data if it changed on server
       setLogin(data, token);
+      toast('Session verified!');
     } catch (error) {
       console.error('Session verification failed:', error);
+      toast.error('Session check failed.');
       setLogout();
     } finally {
+      toast('Init complete.');
       setInitializing(false);
     }
-  };
+  }, []); // Dependencies are empty because setLogin/Logout/Initializing are stable from getState()
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
@@ -36,7 +55,8 @@ export const useAuth = () => {
       const { data } = await api.post('auth/login', { email, password });
       setLogin(data.user, data.token);
       
-      const from = (location.state as any)?.from?.pathname || '/dashboard';
+      const state = location.state as LocationState;
+      const from = state?.from?.pathname || '/dashboard';
       navigate(from, { replace: true });
       
       toast.success('Welcome back to the field!', {
@@ -53,7 +73,7 @@ export const useAuth = () => {
     }
   };
 
-  const signup = async (payload: any) => {
+  const signup = async (payload: SignupPayload) => {
     setIsLoading(true);
     try {
       await api.post('auth/signup', payload);

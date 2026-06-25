@@ -13,6 +13,7 @@ const helmet_1 = __importDefault(require("helmet"));
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
 const logRoutes_1 = __importDefault(require("./routes/logRoutes"));
+const whatsappRoutes_1 = __importDefault(require("./routes/whatsappRoutes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 // Security Middleware
@@ -61,6 +62,7 @@ else {
 }
 app.use('/api/auth', authRoutes_1.default);
 app.use('/api/logs', logRoutes_1.default);
+app.use('/api/whatsapp', whatsappRoutes_1.default);
 // Health check endpoint
 app.get('/api/health', (req, res) => {
     res.json({

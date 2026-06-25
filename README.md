@@ -1,17 +1,31 @@
-# YieldIQ: Transforming Agriculture through Intelligence
+# AgroVoice: Empowering Nigeria's Smallholder Farmers
 
-**Empowering farmers in the last mile with offline-first, voice-native AI.**
+AgroVoice is a production-ready, offline-first Agrifintech platform designed to bridge the gap between Nigeria's unbanked smallholder farmers and modern financial systems. 
 
-YieldIQ is an innovative AgroTech platform designed to bridge the digital divide for smallholder farmers. By providing a secure, voice-first AI interface that works seamlessly in low-connectivity areas, YieldIQ ensures that farmers can access expert crop diagnosis, tracking, and localized insights, regardless of internet access.
+## The Problem
+Smallholder farmers, who produce the majority of Nigeria's food, face critical barriers:
+*   **Financial Exclusion:** Limited access to credit and formal payment systems.
+*   **The Digital Divide:** Poor internet connectivity hinders the use of traditional cloud-based tools.
+*   **Literacy Barriers:** Language and technical complexity prevent farmers from adopting digital tools.
 
-## Technical Highlights
-*   **Offline-First Architecture:** Leveraging **Dexie.js (IndexedDB)** for local persistence, ensuring data is never lost, even in remote regions.
-*   **Voice-Native AI:** Utilizing the **Web Speech API** to enable farmers to log crop data via natural speech, removing literacy and language barriers.
-*   **Data Integrity:** Implementing **cryptographic hashing** for crop records, ensuring that diagnosis history remains immutable and trusted by cooperatives and insurers.
-*   **Synchronization Service:** Intelligent background sync that reconciles local data with the cloud once connectivity is restored.
+## The Solution
+AgroVoice provides a seamless, **offline-first digital ledger** that works in rural environments and synchronizes when connectivity is restored.
 
-## Getting Started
-1. Clone the repository: `git clone <repository-url>`
-2. Install dependencies: `npm run install:all`
-3. Configure your `.env` files in `client/` and `server/`.
-4. Run the development environment: `npm start`
+### Key Features
+*   **Offline-First:** Built on `Dexie.js`/SQLite to ensure no data loss in areas with poor internet.
+*   **Local AI Input:** Uses `Transformers.js` to parse voice/text transactions locally in local languages (Izon, Epie, Ogbia, Nembe).
+*   **Cooperative Credit Scoring:** KYC and transactional history build digital identities for farmers within cooperatives, enabling formal credit.
+*   **WhatsApp & OPay Integration:** Automated invoicing and payment confirmation via accessible channels.
+
+## Architecture
+```mermaid
+graph TD
+    A[Farmer Input: Voice/WhatsApp] --> B{Local AI Parser}
+    B --> C[(Offline SQLite/Dexie)]
+    C -- Sync --> D[Cloud Backend]
+    D --> E[OPay Gateway]
+    D --> F[Cooperative Credit Scoring]
+```
+
+## Impact
+AgroVoice directly addresses productivity and financial inclusion, turning traditional farming into data-driven, bankable enterprises.

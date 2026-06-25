@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { Mic, Square, Save, MapPin } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useLogStore } from '../store/logStore';
+import { parseTransaction } from '../utils/aiParser';
 
 interface SpeechRecognitionEventLike {
   resultIndex: number;
@@ -105,14 +106,19 @@ export const VoiceEntry = () => {
       return;
     }
     try {
+      const { type, amount, item } = await parseTransaction(transcript);
+
       await addLocalLog({
         userId: user.id,
         transcription: transcript,
         timestamp: Date.now(),
-        location
+        location,
+        type,
+        amount,
+        item
       });
       
-      toast.success('Log saved to field journal!', {
+      toast.success('Log saved and parsed!', {
         icon: '🌾',
         style: { borderRadius: '12px', background: '#1a3c1a', color: '#fff' }
       });

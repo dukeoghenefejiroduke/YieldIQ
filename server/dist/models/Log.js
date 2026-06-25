@@ -36,11 +36,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const LogSchema = new mongoose_1.Schema({
     userId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
+    farmerId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Farmer' },
+    type: { type: String, enum: ['sale', 'purchase', 'credit'], required: true },
+    amount: { type: Number, required: true },
+    item: { type: String, required: true },
     transcription: { type: String, required: true },
     timestamp: { type: Number, required: true },
     location: {
         lat: Number,
         lng: Number
+    },
+    paymentStatus: {
+        type: String,
+        enum: ['pending', 'completed', 'failed'],
+        default: 'pending'
     }
 }, { timestamps: true });
 exports.default = mongoose_1.default.model('Log', LogSchema);

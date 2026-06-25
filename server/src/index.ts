@@ -8,6 +8,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import authRoutes from './routes/authRoutes';
 import logRoutes from './routes/logRoutes';
+import whatsappRoutes from './routes/whatsappRoutes';
 
 dotenv.config();
 
@@ -66,6 +67,7 @@ if (process.env.MONGO_URI) {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/logs', logRoutes);
+app.use('/api/whatsapp', whatsappRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
