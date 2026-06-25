@@ -11,6 +11,7 @@ export const Dashboard = () => {
   const { user, logout } = useAuthStore();
   const { logs, fetchLogs, isLoading, isSyncing } = useLogStore();
   const [activeTab, setActiveTab] = useState('journal');
+  const [activeLogId, setActiveLogId] = useState<string | null>(null);
 
   useSync();
 
@@ -53,7 +54,7 @@ export const Dashboard = () => {
         <header className="mb-10 text-left flex justify-between items-end">
           <div>
             <h1 className="text-4xl mb-2 text-forest-deep dark:text-forest-light">Field Command Center</h1>
-            <p className="text-secondary text-lg">Real-time agricultural intelligence and voice logging.</p>
+            <p className="text-text-secondary text-lg">Real-time agricultural intelligence and voice logging.</p>
           </div>
           {isSyncing && (
             <div className="flex items-center gap-2 text-forest-mid font-bold animate-pulse">
@@ -96,31 +97,42 @@ export const Dashboard = () => {
               ) : logs.length === 0 ? (
                 <div className="text-center py-20">
                   <Cloud className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                  <p className="text-secondary">No observations recorded yet.</p>
+                  <p className="text-text-secondary">No observations recorded yet.</p>
                 </div>
               ) : (
                 <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar flex-1">
-                  {logs.map((log) => (
-                    <div key={log._id || log.id} className="p-4 bg-nature-bg rounded-xl border border-glass-border hover:border-forest-light transition-all cursor-pointer group relative">
-                      <div className="flex justify-between items-start mb-2">
-                        <span className="text-xs font-bold text-forest-mid opacity-60">
-                          {new Date(log.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                        {log.syncStatus === 'pending' ? (
-                          <CloudOff className="w-4 h-4 text-amber-500" />
-                        ) : (
-                          <Cloud className="w-4 h-4 text-forest-light" />
+                  {logs.map((log) => {
+                    const logId = log._id || log.id || '';
+                    return (
+                      <div 
+                        key={logId} 
+                        onClick={() => setActiveLogId(logId)}
+                        className={`p-4 bg-nature-bg rounded-xl border transition-all cursor-pointer group relative ${
+                          activeLogId === logId 
+                            ? 'border-forest-mid ring-2 ring-forest-mid/20' 
+                            : 'border-glass-border hover:border-forest-light'
+                        }`}
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <span className="text-xs font-bold text-forest-mid opacity-60">
+                            {new Date(log.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                          {log.syncStatus === 'pending' ? (
+                            <CloudOff className="w-4 h-4 text-amber-500" />
+                          ) : (
+                            <Cloud className="w-4 h-4 text-forest-light" />
+                          )}
+                        </div>
+                        <p className="text-sm line-clamp-2 group-hover:line-clamp-none transition-all">{log.transcription}</p>
+                        {log.location && (
+                          <div className="mt-2 text-[10px] font-mono text-text-secondary flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-forest-mid" />
+                            {log.location.lat.toFixed(4)}, {log.location.lng.toFixed(4)}
+                          </div>
                         )}
                       </div>
-                      <p className="text-sm line-clamp-2 group-hover:line-clamp-none transition-all">{log.transcription}</p>
-                      {log.location && (
-                        <div className="mt-2 text-[10px] font-mono text-secondary flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-forest-mid" />
-                          {log.location.lat.toFixed(4)}, {log.location.lng.toFixed(4)}
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -133,7 +145,7 @@ export const Dashboard = () => {
         <button
           onClick={() => setActiveTab('journal')}
           className={`flex items-center gap-2 px-6 py-3 rounded-xl transition-all ${
-            activeTab === 'journal' ? 'bg-forest-mid text-white shadow-lg' : 'hover:bg-forest-light/10 text-secondary'
+            activeTab === 'journal' ? 'bg-forest-mid text-white shadow-lg' : 'hover:bg-forest-light/10 text-text-secondary'
           }`}
         >
           <LayoutDashboard className="w-5 h-5" />
@@ -142,7 +154,7 @@ export const Dashboard = () => {
         <button
           onClick={() => setActiveTab('settings')}
           className={`flex items-center gap-2 px-6 py-3 rounded-xl transition-all ${
-            activeTab === 'settings' ? 'bg-forest-mid text-white shadow-lg' : 'hover:bg-forest-light/10 text-secondary'
+            activeTab === 'settings' ? 'bg-forest-mid text-white shadow-lg' : 'hover:bg-forest-light/10 text-text-secondary'
           }`}
         >
           <Settings className="w-5 h-5" />

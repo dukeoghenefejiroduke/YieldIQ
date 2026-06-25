@@ -19,7 +19,7 @@ export const Signup = () => {
       <div className="glass-card p-10 max-w-md w-full flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-10 duration-700">
         <div className="text-center space-y-2">
           <h1 className="text-4xl text-forest-deep dark:text-forest-light">Join AgroPulse</h1>
-          <p className="text-secondary font-medium">Start your digital field journey today</p>
+          <p className="text-text-secondary font-medium">Start your digital field journey today</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -82,7 +82,7 @@ export const Signup = () => {
         </form>
 
         <div className="text-center">
-          <p className="text-secondary">
+          <p className="text-text-secondary">
             Already have an account?{' '}
             <Link to="/login" className="text-forest-mid font-bold hover:underline">
               Sign in

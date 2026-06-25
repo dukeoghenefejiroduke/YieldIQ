@@ -18,7 +18,7 @@ export const Login = () => {
       <div className="glass-card p-10 max-w-md w-full flex flex-col gap-8 animate-in fade-in zoom-in duration-700">
         <div className="text-center space-y-2">
           <h1 className="text-4xl text-forest-deep dark:text-forest-light">AgroPulse</h1>
-          <p className="text-secondary font-medium">Precision Farming Command Center</p>
+          <p className="text-text-secondary font-medium">Precision Farming Command Center</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -66,7 +66,7 @@ export const Login = () => {
         </form>
 
         <div className="text-center">
-          <p className="text-secondary">
+          <p className="text-text-secondary">
             New to the platform?{' '}
             <Link to="/signup" className="text-forest-mid font-bold hover:underline">
               Create an account

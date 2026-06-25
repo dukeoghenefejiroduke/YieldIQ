@@ -16,16 +16,24 @@ export default {
           mid: '#2d5a27',
           light: '#4c8c4a',
         },
+        sun: {
+          gold: '#ffcc33',
+        },
         nature: {
           bg: '#f8f9f5',
+          dark: '#0f140f',
         },
         soil: {
           rich: '#3d2b1f',
         },
-        glass: {
-          border: 'rgba(255, 255, 255, 0.4)',
+        text: {
+          primary: '#1a1c18',
+          secondary: '#43493e',
         },
-        secondary: '#43493e',
+        glass: {
+          bg: 'rgba(255, 255, 255, 0.7)',
+          border: 'rgba(255, 255, 255, 0.4)',
+        }
       },
       lineClamp: {
         2: '2',
@@ -59,7 +67,7 @@ export default {
     'text-forest-light',
     'border-glass-border',
     'bg-nature-bg',
-    'text-secondary',
+    'text-text-secondary',
   ],
   plugins: [],
 }

@@ -8,6 +8,7 @@
   --sun-gold: #ffcc33;
   --soil-rich: #3d2b1f;
   --nature-bg: #f8f9f5;
+  --nature-dark: #0f140f;
 
   /* UI Tokens */
   --text-primary: #1a1c18;
@@ -41,7 +42,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --nature-bg: #0f140f;
+    --nature-bg: var(--nature-dark);
     --text-primary: #e2e3dc;
     --text-secondary: #c6c8bf;
     --glass-bg: rgba(26, 30, 26, 0.7);
