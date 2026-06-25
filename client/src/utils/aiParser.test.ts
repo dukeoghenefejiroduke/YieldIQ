@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import * as aiParser from './aiParser';
 
-// Mock the pipeline function
+// Mock parser behavior so tests stay deterministic.
 vi.mock('./aiParser', async (importOriginal) => {
   const actual: any = await importOriginal();
   return {

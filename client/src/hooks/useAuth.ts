@@ -27,29 +27,22 @@ export const useAuth = () => {
   const location = useLocation();
 
   const verifySession = useCallback(async () => {
-    toast('Verifying session...');
     const token = useAuthStore.getState().token;
     if (!token) {
-      toast('No token, stopping init.');
       setInitializing(false);
       return;
     }
 
     try {
-      toast('Fetching user data...');
       const { data } = await api.get('auth/me');
-      // Update user data if it changed on server
       setLogin(data, token);
-      toast('Session verified!');
     } catch (error) {
       console.error('Session verification failed:', error);
-      toast.error('Session check failed.');
       setLogout();
     } finally {
-      toast('Init complete.');
       setInitializing(false);
     }
-  }, []); // Dependencies are empty because setLogin/Logout/Initializing are stable from getState()
+  }, [setInitializing, setLogin, setLogout]);
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);

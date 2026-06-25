@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api';
+const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+const apiBaseUrl = configuredApiBaseUrl || '/api';
 const normalizedBaseUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl : `${apiBaseUrl}/`;
 
 const api = axios.create({

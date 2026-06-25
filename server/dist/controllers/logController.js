@@ -9,13 +9,13 @@ const Log_1 = __importDefault(require("../models/Log"));
 const LogSchema = zod_1.z.object({
     transcription: zod_1.z.string().min(1),
     type: zod_1.z.enum(['sale', 'purchase', 'credit']),
-    amount: zod_1.z.number().positive(),
+    amount: zod_1.z.number().nonnegative(),
     item: zod_1.z.string().min(1),
     timestamp: zod_1.z.number().optional(),
     location: zod_1.z.object({
         lat: zod_1.z.number(),
         lng: zod_1.z.number()
-    }).optional(),
+    }).nullable().optional(),
     farmerId: zod_1.z.string().optional()
 });
 const createLog = async (req, res) => {

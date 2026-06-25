@@ -5,13 +5,13 @@ import Log from '../models/Log';
 const LogSchema = z.object({
   transcription: z.string().min(1),
   type: z.enum(['sale', 'purchase', 'credit']),
-  amount: z.number().positive(),
+  amount: z.number().nonnegative(),
   item: z.string().min(1),
   timestamp: z.number().optional(),
   location: z.object({
     lat: z.number(),
     lng: z.number()
-  }).optional(),
+  }).nullable().optional(),
   farmerId: z.string().optional()
 });
 
