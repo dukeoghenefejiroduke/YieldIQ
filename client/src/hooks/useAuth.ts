@@ -19,7 +19,9 @@ interface SignupPayload {
 
 export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { user, isAuthenticated, isInitializing } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const isInitializing = useAuthStore((state) => state.isInitializing);
   const { login: setLogin, logout: setLogout, setInitializing } = useAuthStore.getState();
   const navigate = useNavigate();
   const location = useLocation();

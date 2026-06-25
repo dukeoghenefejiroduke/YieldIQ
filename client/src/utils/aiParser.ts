@@ -1,41 +1,41 @@
-// Simple mock for parsing - in a real scenario, this would be a fine-tuned model
-// pipeline('text-classification', 'Xenova/distilbert-base-uncased-finetuned-sst-2-english')
-// For our needs, we would ideally use a slot-filling/NER model.
-// Here I'm implementing a basic keyword parser that mimics AI extraction.
+type LogType = 'sale' | 'purchase' | 'credit';
 
-import { pipeline } from '@xenova/transformers';
+const itemKeywords = ['maize', 'beans', 'rice', 'yam', 'cassava', 'tomato', 'pepper'];
 
-// Interface for language-specific models
-interface LanguageModel {
-    translate: (text: string, from: string) => Promise<string>;
-}
+const inferType = (text: string): LogType => {
+  const lower = text.toLowerCase();
 
-// Placeholder for translation model
-const translator: LanguageModel = {
-    translate: async (text: string, from: string) => {
-        // In production, this would use a real translation pipeline
-        console.log(`Translating from ${from}: ${text}`);
-        return text; // Placeholder
-    }
+  if (lower.includes('bought') || lower.includes('purchase') || lower.includes('purchased')) {
+    return 'purchase';
+  }
+
+  if (lower.includes('credit') || lower.includes('owed') || lower.includes('debt')) {
+    return 'credit';
+  }
+
+  return 'sale';
 };
 
-const classifier = await pipeline('zero-shot-classification', 'Xenova/distilbert-base-uncased-mnli');
+const inferAmount = (text: string) => {
+  const match = text.match(/(\d+(?:\.\d+)?)/);
+  return match ? Number(match[1]) : 0;
+};
 
-export const parseTransaction = async (text: string, language: string = 'en') => {
-    // 1. Translation layer
-    const translatedText = language !== 'en' ? await translator.translate(text, language) : text;
+const inferItem = (text: string) => {
+  const lower = text.toLowerCase();
+  return itemKeywords.find((word) => lower.includes(word)) || 'general';
+};
 
-    // 2. Classification
-    const candidateLabels = ['sale', 'purchase', 'credit'];
-    const result = (await classifier(translatedText, candidateLabels)) as any;
-    
-    const type = result.labels[0] as 'sale' | 'purchase' | 'credit';
+export const parseTransaction = async (text: string) => {
+  const cleanedText = text.trim();
 
-    // 3. Extraction (using translated text)
-    const lower = translatedText.toLowerCase();
-    const amountMatch = lower.match(/(\d+)/);
-    const amount = amountMatch ? parseInt(amountMatch[0], 10) : 0;
-    const item = lower.split(' ').find(word => ['maize', 'beans', 'rice', 'yam'].includes(word)) || 'general';
+  if (!cleanedText) {
+    return { type: 'sale' as const, amount: 0, item: 'general' };
+  }
 
-    return { type, amount, item };
+  return {
+    type: inferType(cleanedText),
+    amount: inferAmount(cleanedText),
+    item: inferItem(cleanedText),
+  };
 };
