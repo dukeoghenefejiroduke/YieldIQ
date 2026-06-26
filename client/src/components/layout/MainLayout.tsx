@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, MapPin, TrendingUp, BarChart, Settings, User, Globe } from 'lucide-react';
+import { LayoutDashboard, MapPin, TrendingUp, BarChart, Settings, Globe } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {

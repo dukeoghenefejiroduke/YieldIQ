@@ -5,15 +5,14 @@ import { useLogStore } from '../store/logStore';
 import { KPICards } from '../components/dashboard/KPICards';
 import { VoiceEntry } from '../components/VoiceEntry';
 import { ConnectionStatus } from '../components/ui/ConnectionStatus';
-import { LogOut, LayoutDashboard, History, Settings, Cloud, CloudOff, RefreshCw, DollarSign } from 'lucide-react';
+import { History, Cloud, CloudOff, RefreshCw, DollarSign } from 'lucide-react';
 import { useSync } from '../hooks/useSync';
 import { getFarmerProfile } from '../services/farmerService';
 import { getMarketPrices } from '../services/marketService';
 
 export const Dashboard = () => {
-  const { user, logout } = useAuthStore();
+  const { user } = useAuthStore();
   const { logs, fetchLogs, isLoading, isSyncing } = useLogStore();
-  const [activeTab, setActiveTab] = useState('journal');
   const [activeLogId, setActiveLogId] = useState<string | null>(null);
   const [farmer, setFarmer] = useState<any>(null);
   const [prices, setPrices] = useState<any[]>([]);
@@ -52,7 +51,7 @@ export const Dashboard = () => {
           )}
         </header>
 
-        <KPICards farmer={farmer} logs={logs} pendingCount={pendingCount} />
+        <KPICards farmer={farmer} logs={logs} pendingCount={pendingCount} entriesCount={logs.length} productivity="+12%" />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Voice Entry - Primary Action */}

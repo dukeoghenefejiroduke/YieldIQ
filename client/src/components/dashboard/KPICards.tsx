@@ -1,7 +1,6 @@
-import React from 'react';
-import { FileText, CloudUpload, MapPin, TrendingUp } from 'lucide-react';
+import { FileText, CloudUpload, TrendingUp } from 'lucide-react';
 
-export const KPICards = ({ farmer, logs, pendingCount, entriesCount, productivity }) => {
+export const KPICards = ({ farmer, logs, pendingCount, entriesCount, productivity }: { farmer?: any; logs?: any[]; pendingCount?: number; entriesCount?: number; productivity?: string }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       {/* Credit Score Card */}
@@ -29,11 +28,18 @@ export const KPICards = ({ farmer, logs, pendingCount, entriesCount, productivit
             <p className="text-3xl font-extrabold">{pendingCount || 0}</p>
         </div>
       </div>
+      <div className="bg-background-card p-6 rounded-2xl border border-glass-border shadow-sm flex items-center gap-4">
+        <FileText className="text-primary w-8 h-8" />
+        <div>
+            <p className="text-text-muted text-sm">Field Entries</p>
+            <p className="text-3xl font-extrabold">{entriesCount || 0}</p>
+        </div>
+      </div>
       <div className="bg-background-card p-6 rounded-2xl border border-glass-border shadow-sm flex items-center gap-4 border-l-4 border-l-alert-success">
         <TrendingUp className="text-alert-success w-8 h-8" />
         <div>
             <p className="text-text-muted text-sm">Productivity</p>
-            <p className="text-3xl font-extrabold text-alert-success">+12%</p>
+            <p className="text-3xl font-extrabold text-alert-success">{productivity || '+12%'}</p>
         </div>
       </div>
     </div>

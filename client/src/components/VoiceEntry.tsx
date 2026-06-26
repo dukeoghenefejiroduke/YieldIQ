@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import toast from 'react-hot-toast';
-import { Mic, Square, Save, MapPin } from 'lucide-react';
+import { Mic, MapPin } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useLogStore } from '../store/logStore';
 import { parseTransaction } from '../utils/aiParser';
