@@ -4,14 +4,19 @@ import { Toaster } from 'react-hot-toast';
 import { Signup } from './pages/Signup';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
+import { WhatsappView } from './pages/features/WhatsappView';
+import { UssdView } from './pages/features/UssdView';
+import { ReportsView } from './pages/features/ReportsView';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { useAuth } from './hooks/useAuth';
+import { useAuthStore } from './store/authStore';
 import { Loader2 } from 'lucide-react';
 import './App.css';
 
 function AppShell() {
   const { verifySession, isInitializing } = useAuth();
+  const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
     verifySession();
@@ -30,15 +35,30 @@ function AppShell() {
     <>
       <Toaster position="top-center" />
       <Routes>
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Signup />} />
+        <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} />
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <Dashboard />
           </ProtectedRoute>
         } />
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="/whatsapp" element={
+          <ProtectedRoute>
+            <WhatsappView />
+          </ProtectedRoute>
+        } />
+        <Route path="/ussd" element={
+          <ProtectedRoute>
+            <UssdView />
+          </ProtectedRoute>
+        } />
+        <Route path="/reports" element={
+          <ProtectedRoute>
+            <ReportsView />
+          </ProtectedRoute>
+        } />
+        <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
+        <Route path="*" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
       </Routes>
     </>
   );

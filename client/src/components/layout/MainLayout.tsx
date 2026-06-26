@@ -1,18 +1,21 @@
 import React from 'react';
 import { LayoutDashboard, MapPin, TrendingUp, BarChart, Settings, Globe } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="flex h-screen bg-background text-text-primary">
       {/* Sidebar */}
       <aside className="w-18 bg-gradient-to-b from-primary to-black flex flex-col items-center py-6 gap-6 fixed h-full z-50">
-        <div className="text-white font-bold text-xl">AP</div>
+        <div className="text-white font-bold text-xl cursor-pointer" onClick={() => navigate('/dashboard')}>AP</div>
         <nav className="flex flex-col gap-6">
-          <LayoutDashboard className="text-white/70 hover:text-white cursor-pointer" />
-          <MapPin className="text-white/70 hover:text-white cursor-pointer" />
-          <TrendingUp className="text-white/70 hover:text-white cursor-pointer" />
-          <BarChart className="text-white/70 hover:text-white cursor-pointer" />
+          <LayoutDashboard className="text-white/70 hover:text-white cursor-pointer" onClick={() => navigate('/dashboard')} />
+          <MapPin className="text-white/70 hover:text-white cursor-pointer" onClick={() => navigate('/whatsapp')} />
+          <TrendingUp className="text-white/70 hover:text-white cursor-pointer" onClick={() => navigate('/ussd')} />
+          <BarChart className="text-white/70 hover:text-white cursor-pointer" onClick={() => navigate('/reports')} />
           <Settings className="text-white/70 hover:text-white cursor-pointer" />
         </nav>
       </aside>

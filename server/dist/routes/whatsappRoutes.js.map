@@ -1,1 +1,0 @@
-{"version":3,"file":"whatsappRoutes.js","sourceRoot":"","sources":["../../src/routes/whatsappRoutes.ts"],"names":[],"mappings":"AAAA,OAAO,OAAO,MAAM,SAAS,CAAC;AAC9B,OAAO,EAAE,aAAa,EAAE,aAAa,EAAE,MAAM,sCAAsC,CAAC;AAEpF,MAAM,MAAM,GAAG,OAAO,CAAC,MAAM,EAAE,CAAC;AAEhC,MAAM,CAAC,GAAG,CAAC,UAAU,EAAE,aAAa,CAAC,CAAC;AACtC,MAAM,CAAC,IAAI,CAAC,UAAU,EAAE,aAAa,CAAC,CAAC;AAEvC,eAAe,MAAM,CAAC"}
