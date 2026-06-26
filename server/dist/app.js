@@ -14,6 +14,8 @@ import authRoutes from './routes/authRoutes.js';
 import logRoutes from './routes/logRoutes.js';
 import whatsappRoutes from './routes/whatsappRoutes.js';
 import ussdRoutes from './routes/ussdRoutes.js';
+import farmerRoutes from './routes/farmerRoutes.js';
+import marketRoutes from './routes/marketRoutes.js';
 dotenv.config();
 const app = express();
 connectDB();
@@ -56,6 +58,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/logs', logRoutes);
 app.use('/api/whatsapp', whatsappRoutes);
 app.use('/api/ussd', ussdRoutes);
+app.use('/api/farmer', farmerRoutes);
+app.use('/api/market', marketRoutes);
 // Health check endpoint
 app.get('/api/health', (req, res) => {
     res.json({

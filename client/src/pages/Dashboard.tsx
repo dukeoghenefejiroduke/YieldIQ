@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+import { MainLayout } from '../components/layout/MainLayout';
 import { useAuthStore } from '../store/authStore';
 import { useLogStore } from '../store/logStore';
-import { StatsView } from '../components/StatsView';
+import { KPICards } from '../components/dashboard/KPICards';
 import { VoiceEntry } from '../components/VoiceEntry';
 import { ConnectionStatus } from '../components/ui/ConnectionStatus';
 import { LogOut, LayoutDashboard, History, Settings, Cloud, CloudOff, RefreshCw, DollarSign } from 'lucide-react';
@@ -29,36 +30,12 @@ export const Dashboard = () => {
   const creditScore = farmer?.creditScore || 0;
 
   return (
-    <div className="min-h-screen pb-24">
+    <MainLayout>
+      <div className="min-h-screen pb-24">
       <ConnectionStatus />
       
-      {/* Premium Sidebar/Nav */}
-      <nav className="fixed top-0 left-0 right-0 h-20 glass-card rounded-none border-t-0 border-x-0 z-40 px-6 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-forest-mid rounded-xl flex items-center justify-center shadow-lg">
-            <LayoutDashboard className="text-white w-6 h-6" />
-          </div>
-          <span className="text-xl font-bold tracking-tight">AgroPulse Elite</span>
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <div className="hidden md:block text-right">
-            <p className="text-sm font-bold">{user?.username}</p>
-            <p className="text-xs text-secondary capitalize">{user?.role || 'Farmer'}</p>
-          </div>
-          <button
-            onClick={logout}
-            className="p-3 hover:bg-red-50 text-red-500 rounded-xl transition-colors"
-            title="Logout"
-            aria-label="Logout"
-          >
-            <LogOut className="w-6 h-6" />
-          </button>
-        </div>
-      </nav>
-
       {/* Main Content Area */}
-      <main className="mt-28 max-w-7xl mx-auto px-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
+      <main className="max-w-7xl mx-auto px-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
         <header className="mb-10 text-left flex justify-between items-end">
           <div>
             <h1 className="text-4xl mb-2 text-forest-deep dark:text-forest-light">Field Command Center</h1>
@@ -75,7 +52,7 @@ export const Dashboard = () => {
           )}
         </header>
 
-        <StatsView logsCount={logs.length} pendingCount={pendingCount} />
+        <KPICards farmer={farmer} logs={logs} pendingCount={pendingCount} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Voice Entry - Primary Action */}
@@ -83,17 +60,33 @@ export const Dashboard = () => {
             <VoiceEntry />
             
             {/* Market Prices Section */}
-            <div className="glass-card p-6">
-                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                    <DollarSign className="w-5 h-5 text-forest-mid" /> Real-time Market Prices
-                </h3>
-                <div className="grid grid-cols-2 gap-4">
-                    {prices.map((p, i) => (
-                        <div key={i} className="bg-nature-bg p-3 rounded-lg border border-glass-border">
-                            <p className="font-bold">{p.crop}</p>
-                            <p className="text-sm">₦{p.price} / {p.unit}</p>
-                        </div>
-                    ))}
+            <div className="bg-background-card p-6 rounded-2xl border border-glass-border shadow-sm">
+                <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-xl font-bold flex items-center gap-2">
+                        <DollarSign className="w-5 h-5 text-primary" /> Real-time Market Prices
+                    </h3>
+                    <div className="flex items-center gap-2 text-xs font-bold text-alert-success bg-alert-success/10 px-2 py-1 rounded-full">
+                        <div className="w-2 h-2 rounded-full bg-alert-success animate-pulse"></div> Live
+                    </div>
+                </div>
+                <div className="space-y-4">
+                    {prices.length === 0 ? (
+                        [1,2,3].map(i => <div key={i} className="h-12 bg-gray-100 rounded-lg animate-pulse" />)
+                    ) : (
+                        prices.map((p, i) => (
+                            <div key={i} className="flex justify-between items-center p-3 border-b border-glass-border">
+                                <p className="font-bold">{p.crop}</p>
+                                <p className="text-sm text-text-secondary">₦{p.price} / {p.unit}</p>
+                                <p className="text-sm font-bold text-alert-success">+2.4%</p>
+                            </div>
+                        ))
+                    )}
+                </div>
+                <div className="mt-8">
+                    <h4 className="font-bold mb-2">History</h4>
+                    <div className="h-24 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-200">
+                        <p className="text-text-muted text-sm">No observations recorded yet.</p>
+                    </div>
                 </div>
             </div>
           </div>
@@ -170,30 +163,7 @@ export const Dashboard = () => {
           </div>
         </div>
       </main>
-
-      {/* Floating Bottom Nav */}
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 p-2 glass-card rounded-2xl shadow-2xl border-forest-light/20 z-40">
-        <button
-          onClick={() => setActiveTab('journal')}
-          className={`flex items-center gap-2 px-6 py-3 rounded-xl transition-all ${
-            activeTab === 'journal' ? 'bg-forest-mid text-white shadow-lg' : 'hover:bg-forest-light/10 text-text-secondary'
-          }`}
-          aria-label="Journal command"
-        >
-          <LayoutDashboard className="w-5 h-5" />
-          <span className="font-bold hidden sm:inline">Command</span>
-        </button>
-        <button
-          onClick={() => setActiveTab('settings')}
-          className={`flex items-center gap-2 px-6 py-3 rounded-xl transition-all ${
-            activeTab === 'settings' ? 'bg-forest-mid text-white shadow-lg' : 'hover:bg-forest-light/10 text-text-secondary'
-          }`}
-          aria-label="Settings"
-        >
-          <Settings className="w-5 h-5" />
-          <span className="font-bold hidden sm:inline">Settings</span>
-        </button>
-      </div>
     </div>
+  </MainLayout>
   );
 };

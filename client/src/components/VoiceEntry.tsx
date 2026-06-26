@@ -132,63 +132,60 @@ export const VoiceEntry = () => {
   };
 
   return (
-    <div className="glass-card p-8 flex flex-col items-center gap-6 max-w-2xl mx-auto mt-10">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold mb-2">Voice Journal</h2>
-        <p className="text-secondary">Capture observations instantly with AgroPulse AI.</p>
+    <div className={`glass-card p-8 flex flex-col gap-6 w-full ${isRecording ? 'border-secondary' : ''}`}>
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-bold">Voice Journal</h2>
+        <button className="text-sm font-bold text-primary hover:underline">+ New</button>
       </div>
 
-      <div className="relative flex items-center justify-center w-full py-10">
-        {isRecording && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="w-32 h-32 bg-forest-mid rounded-full animate-ping opacity-20" />
-            <div className="w-48 h-48 bg-forest-light rounded-full animate-pulse opacity-10" />
-          </div>
+      <div className="relative w-full">
+        <textarea
+          value={transcript}
+          onChange={(e) => setTranscript(e.target.value)}
+          className={`w-full h-32 rounded-2xl p-4 text-lg bg-background border ${isRecording ? 'border-secondary' : 'border-glass-border'}`}
+          placeholder="Your voice transcription will appear here..."
+        />
+        {!isRecording && !transcript && (
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-1 opacity-20">
+                <div className="w-1 h-8 bg-primary animate-pulse"></div>
+                <div className="w-1 h-12 bg-primary animate-pulse delay-75"></div>
+                <div className="w-1 h-8 bg-primary animate-pulse delay-150"></div>
+            </div>
         )}
-        
-        <button
-          onClick={isRecording ? stopRecording : startRecording}
-          className={`relative z-10 w-24 h-24 rounded-full flex items-center justify-center shadow-xl transition-all duration-500 ${
-            isRecording ? 'bg-red-500 scale-110' : 'bg-forest-mid hover:bg-forest-light'
-          }`}
-        >
-          {isRecording ? <Square className="text-white w-10 h-10" /> : <Mic className="text-white w-10 h-10" />}
-        </button>
       </div>
 
-      <div className="w-full space-y-4">
-        <div className="flex items-center justify-between px-2">
-          <span className="text-sm font-semibold flex items-center gap-2 text-secondary">
-            <MapPin className={`w-4 h-4 ${location ? 'text-forest-mid' : 'text-gray-300'}`} />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <MapPin className={`w-4 h-4 ${location ? 'text-primary' : 'text-text-muted'}`} />
+          <span className="text-sm text-text-secondary">
             {location ? `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}` : 'No location tagged'}
           </span>
           <button 
             onClick={fetchLocation}
             disabled={isFetchingLocation}
-            className="text-xs font-bold text-forest-mid hover:underline disabled:opacity-50"
+            className="text-xs font-bold text-secondary hover:underline disabled:opacity-50"
           >
             {isFetchingLocation ? 'Locating...' : 'Refresh GPS'}
           </button>
         </div>
 
-        <textarea
-          value={transcript}
-          onChange={(e) => setTranscript(e.target.value)}
-          className="input-field h-40 resize-none text-lg leading-relaxed mb-4"
-          placeholder="Your voice transcription will appear here..."
-        />
-        
-        <div className="flex gap-4">
-          <button
-            onClick={saveLog}
-            disabled={!transcript.trim()}
-            className="flex-1 bg-forest-mid text-white py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-forest-deep disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-          >
-            <Save className="w-5 h-5" />
-            Save to Journal
-          </button>
-        </div>
+        <button
+          onClick={isRecording ? stopRecording : startRecording}
+          className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all ${
+            isRecording ? 'bg-alert-danger animate-pulse' : 'bg-primary'
+          }`}
+        >
+          <Mic className="text-white w-6 h-6" />
+        </button>
       </div>
+        
+      <button
+        onClick={saveLog}
+        disabled={!transcript.trim()}
+        className="w-full bg-primary text-white py-4 rounded-xl font-bold hover:bg-primary/90 disabled:opacity-50"
+      >
+        Save to Journal
+      </button>
     </div>
   );
 };
