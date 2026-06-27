@@ -4,6 +4,8 @@ import { Toaster } from 'react-hot-toast';
 import { Signup } from './pages/Signup';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
+import { CreateFarmerProfile } from './pages/CreateFarmerProfile';
+import { CreateTransaction } from './pages/features/CreateTransaction';
 import { WhatsappView } from './pages/features/WhatsappView';
 import { UssdView } from './pages/features/UssdView';
 import { ReportsView } from './pages/features/ReportsView';
@@ -40,6 +42,16 @@ function AppShell() {
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/create-profile" element={
+          <ProtectedRoute>
+            <CreateFarmerProfile />
+          </ProtectedRoute>
+        } />
+        <Route path="/log-transaction" element={
+          <ProtectedRoute>
+            <CreateTransaction />
           </ProtectedRoute>
         } />
         <Route path="/whatsapp" element={

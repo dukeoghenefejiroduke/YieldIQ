@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '../components/layout/MainLayout';
 import { useAuthStore } from '../store/authStore';
 import { useLogStore } from '../store/logStore';
@@ -13,17 +14,30 @@ import { getMarketPrices } from '../services/marketService';
 export const Dashboard = () => {
   const { user } = useAuthStore();
   const { logs, fetchLogs, isLoading, isSyncing } = useLogStore();
+  const navigate = useNavigate();
   const [activeLogId, setActiveLogId] = useState<string | null>(null);
   const [farmer, setFarmer] = useState<any>(null);
   const [prices, setPrices] = useState<any[]>([]);
 
   useSync();
 
-  useEffect(() => {
+  const fetchData = useCallback(async () => {
     fetchLogs();
-    getFarmerProfile().then(setFarmer).catch(console.error);
-    getMarketPrices().then(setPrices).catch(console.error);
+    try {
+      const [farmerData, pricesData] = await Promise.all([
+        getFarmerProfile(),
+        getMarketPrices()
+      ]);
+      setFarmer(farmerData);
+      setPrices(pricesData);
+    } catch (error) {
+      console.error('Failed to fetch dashboard data', error);
+    }
   }, [fetchLogs]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const pendingCount = logs.filter(l => l.syncStatus === 'pending').length;
   const creditScore = farmer?.creditScore || 0;
@@ -52,6 +66,12 @@ export const Dashboard = () => {
         </header>
 
         <KPICards farmer={farmer} logs={logs} pendingCount={pendingCount} entriesCount={logs.length} productivity="+12%" />
+        
+        <div className="mb-6">
+            <button onClick={() => navigate('/log-transaction')} className="bg-secondary text-primary px-6 py-2 rounded-lg font-bold">
+                + Log New Transaction
+            </button>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Voice Entry - Primary Action */}
@@ -80,12 +100,6 @@ export const Dashboard = () => {
                             </div>
                         ))
                     )}
-                </div>
-                <div className="mt-8">
-                    <h4 className="font-bold mb-2">History</h4>
-                    <div className="h-24 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-200">
-                        <p className="text-text-muted text-sm">No observations recorded yet.</p>
-                    </div>
                 </div>
             </div>
           </div>

@@ -1,0 +1,144 @@
+import mongoose from 'mongoose';
+declare const _default: mongoose.Model<{
+    type: "sale" | "purchase" | "credit";
+    userId: mongoose.Types.ObjectId;
+    amount: number;
+    item: string;
+    transcription: string;
+    timestamp: number;
+    paymentStatus: "pending" | "completed" | "failed";
+    farmerId?: mongoose.Types.ObjectId | null;
+    location?: {
+        lat?: number | null;
+        lng?: number | null;
+    } | null;
+} & mongoose.DefaultTimestampProps, {}, {}, {
+    id: string;
+}, mongoose.Document<unknown, {}, {
+    type: "sale" | "purchase" | "credit";
+    userId: mongoose.Types.ObjectId;
+    amount: number;
+    item: string;
+    transcription: string;
+    timestamp: number;
+    paymentStatus: "pending" | "completed" | "failed";
+    farmerId?: mongoose.Types.ObjectId | null;
+    location?: {
+        lat?: number | null;
+        lng?: number | null;
+    } | null;
+} & mongoose.DefaultTimestampProps, {
+    id: string;
+}, {
+    timestamps: true;
+}> & Omit<{
+    type: "sale" | "purchase" | "credit";
+    userId: mongoose.Types.ObjectId;
+    amount: number;
+    item: string;
+    transcription: string;
+    timestamp: number;
+    paymentStatus: "pending" | "completed" | "failed";
+    farmerId?: mongoose.Types.ObjectId | null;
+    location?: {
+        lat?: number | null;
+        lng?: number | null;
+    } | null;
+} & mongoose.DefaultTimestampProps & {
+    _id: mongoose.Types.ObjectId;
+} & {
+    __v: number;
+}, "id"> & {
+    id: string;
+}, mongoose.Schema<any, mongoose.Model<any, any, any, any, any, any, any>, {}, {}, {}, {}, {
+    timestamps: true;
+}, {
+    type: "sale" | "purchase" | "credit";
+    userId: mongoose.Types.ObjectId;
+    amount: number;
+    item: string;
+    transcription: string;
+    timestamp: number;
+    paymentStatus: "pending" | "completed" | "failed";
+    farmerId?: mongoose.Types.ObjectId | null;
+    location?: {
+        lat?: number | null;
+        lng?: number | null;
+    } | null;
+} & mongoose.DefaultTimestampProps, mongoose.Document<unknown, {}, {
+    type: "sale" | "purchase" | "credit";
+    userId: mongoose.Types.ObjectId;
+    amount: number;
+    item: string;
+    transcription: string;
+    timestamp: number;
+    paymentStatus: "pending" | "completed" | "failed";
+    farmerId?: mongoose.Types.ObjectId | null;
+    location?: {
+        lat?: number | null;
+        lng?: number | null;
+    } | null;
+} & mongoose.DefaultTimestampProps, {
+    id: string;
+}, Omit<mongoose.DefaultSchemaOptions, "timestamps"> & {
+    timestamps: true;
+}> & Omit<{
+    type: "sale" | "purchase" | "credit";
+    userId: mongoose.Types.ObjectId;
+    amount: number;
+    item: string;
+    transcription: string;
+    timestamp: number;
+    paymentStatus: "pending" | "completed" | "failed";
+    farmerId?: mongoose.Types.ObjectId | null;
+    location?: {
+        lat?: number | null;
+        lng?: number | null;
+    } | null;
+} & mongoose.DefaultTimestampProps & {
+    _id: mongoose.Types.ObjectId;
+} & {
+    __v: number;
+}, "id"> & {
+    id: string;
+}, unknown, {
+    type: "sale" | "purchase" | "credit";
+    userId: mongoose.Types.ObjectId;
+    amount: number;
+    item: string;
+    transcription: string;
+    timestamp: number;
+    paymentStatus: "pending" | "completed" | "failed";
+    farmerId?: mongoose.Types.ObjectId | null;
+    location?: {
+        lat?: number | null;
+        lng?: number | null;
+    } | null;
+    createdAt: NativeDate;
+    updatedAt: NativeDate;
+} & {
+    _id: mongoose.Types.ObjectId;
+} & {
+    __v: number;
+}>, {
+    type: "sale" | "purchase" | "credit";
+    userId: mongoose.Types.ObjectId;
+    amount: number;
+    item: string;
+    transcription: string;
+    timestamp: number;
+    paymentStatus: "pending" | "completed" | "failed";
+    farmerId?: mongoose.Types.ObjectId | null;
+    location?: {
+        lat?: number | null;
+        lng?: number | null;
+    } | null;
+    createdAt: NativeDate;
+    updatedAt: NativeDate;
+} & {
+    _id: mongoose.Types.ObjectId;
+} & {
+    __v: number;
+}>;
+export default _default;
+//# sourceMappingURL=Log.d.ts.map
