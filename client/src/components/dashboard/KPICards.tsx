@@ -1,4 +1,5 @@
 import { FileText, CloudUpload, TrendingUp } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const KPICards = ({ farmer, logs, pendingCount, entriesCount, productivity }: { farmer?: any; logs?: any[]; pendingCount?: number; entriesCount?: number; productivity?: string }) => {
   return (
@@ -14,34 +15,34 @@ export const KPICards = ({ farmer, logs, pendingCount, entriesCount, productivit
       </div>
 
       {/* KPI Cards */}
-      <div className="bg-background-card p-6 rounded-2xl border border-glass-border shadow-sm flex items-center gap-4">
+      <Link to="/reports" className="bg-background-card p-6 rounded-2xl border border-glass-border shadow-sm flex items-center gap-4 hover:border-primary transition-colors">
         <FileText className="text-primary w-8 h-8" />
         <div>
             <p className="text-text-muted text-sm">Total Logs</p>
             <p className="text-3xl font-extrabold">{logs?.length || 0}</p>
         </div>
-      </div>
-      <div className="bg-background-card p-6 rounded-2xl border border-glass-border shadow-sm flex items-center gap-4">
+      </Link>
+      <Link to="/reports" className="bg-background-card p-6 rounded-2xl border border-glass-border shadow-sm flex items-center gap-4 hover:border-primary transition-colors">
         <CloudUpload className="text-primary w-8 h-8" />
         <div>
             <p className="text-text-muted text-sm">Pending Sync</p>
             <p className="text-3xl font-extrabold">{pendingCount || 0}</p>
         </div>
-      </div>
-      <div className="bg-background-card p-6 rounded-2xl border border-glass-border shadow-sm flex items-center gap-4">
+      </Link>
+      <Link to="/reports" className="bg-background-card p-6 rounded-2xl border border-glass-border shadow-sm flex items-center gap-4 hover:border-primary transition-colors">
         <FileText className="text-primary w-8 h-8" />
         <div>
             <p className="text-text-muted text-sm">Field Entries</p>
             <p className="text-3xl font-extrabold">{entriesCount || 0}</p>
         </div>
-      </div>
-      <div className="bg-background-card p-6 rounded-2xl border border-glass-border shadow-sm flex items-center gap-4 border-l-4 border-l-alert-success">
+      </Link>
+      <Link to="/reports" className="bg-background-card p-6 rounded-2xl border border-glass-border shadow-sm flex items-center gap-4 border-l-4 border-l-alert-success hover:border-alert-success transition-colors">
         <TrendingUp className="text-alert-success w-8 h-8" />
         <div>
             <p className="text-text-muted text-sm">Productivity</p>
             <p className="text-3xl font-extrabold text-alert-success">{productivity || '+12%'}</p>
         </div>
-      </div>
+      </Link>
     </div>
   );
 };
