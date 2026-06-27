@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { db, type LogEntry } from '../db/db';
 import api from '../services/api';
 import { syncLogs as performSync } from '../services/syncService';
+import { calculateCreditScore } from '../services/creditScoringService';
 
 export interface UnifiedLog {
   id?: string | number;
@@ -15,10 +16,12 @@ export interface UnifiedLog {
   timestamp: number;
   location: { lat: number; lng: number } | null;
   syncStatus: 'pending' | 'synced';
+  source?: 'app' | 'sms' | 'ussd';
 }
 
 interface LogState {
   logs: UnifiedLog[];
+  creditScore: number;
   isLoading: boolean;
   isSyncing: boolean;
   syncMessage: string | null;
@@ -29,15 +32,22 @@ interface LogState {
   setSyncing: (isSyncing: boolean, message?: string | null) => void;
   syncLogs: () => Promise<void>;
   simulateIncomingEvent: () => void;
+  updateScore: () => void;
 }
 
 export const useLogStore = create<LogState>((set, get) => ({
   logs: [],
+  creditScore: 0,
   isLoading: false,
   isSyncing: false,
   syncMessage: null,
   demoMode: false,
   toggleDemoMode: () => set((state) => ({ demoMode: !state.demoMode })),
+
+  updateScore: () => {
+    const score = calculateCreditScore(get().logs);
+    set({ creditScore: score });
+  },
 
   simulateIncomingEvent: () => {
     if (!get().demoMode) return;
@@ -52,6 +62,7 @@ export const useLogStore = create<LogState>((set, get) => ({
         syncStatus: 'synced'
     };
     set((state) => ({ logs: [demoLog, ...state.logs].sort((a, b) => b.timestamp - a.timestamp) }));
+    get().updateScore();
   },
 
   fetchLogs: async () => {
@@ -71,6 +82,7 @@ export const useLogStore = create<LogState>((set, get) => ({
 
       const combined = [...pendingLogs, ...syncedLogs].sort((a, b) => b.timestamp - a.timestamp);
       set({ logs: combined, isLoading: false });
+      get().updateScore();
     } catch (error) {
       console.error('Failed to fetch logs:', error);
       const localLogs = await db.logs.where('syncStatus').equals('pending').toArray();
@@ -78,6 +90,7 @@ export const useLogStore = create<LogState>((set, get) => ({
         logs: localLogs.map(l => ({ ...l, syncStatus: 'pending' as const })), 
         isLoading: false 
       });
+      get().updateScore();
     }
   },
 
@@ -92,6 +105,7 @@ export const useLogStore = create<LogState>((set, get) => ({
     set((state) => ({
       logs: [unifiedLog, ...state.logs].sort((a, b) => b.timestamp - a.timestamp)
     }));
+    get().updateScore();
     
     get().syncLogs();
   },

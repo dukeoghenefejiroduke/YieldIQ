@@ -17,10 +17,11 @@ export const getFarmerProfile = async (req, res) => {
 
 export const createFarmerProfile = async (req, res) => {
     try {
-        const userId = new mongoose.Types.ObjectId(req.user?.userId);
-        if (!userId) {
-            return res.status(400).json({ error: 'User ID is missing from token' });
+        const rawUserId = req.user?.userId;
+        if (!rawUserId || !mongoose.Types.ObjectId.isValid(rawUserId)) {
+            return res.status(400).json({ error: 'Invalid or missing User ID' });
         }
+        const userId = new mongoose.Types.ObjectId(rawUserId);
         
         const { name, phoneNumber, location } = req.body;
         
@@ -38,7 +39,7 @@ export const createFarmerProfile = async (req, res) => {
         });
         res.status(201).json(newFarmer);
     } catch (error: any) {
-        console.error('Error creating farmer profile:', error);
+        console.error('CRITICAL: Error creating farmer profile:', error);
         
         // Ensure error is a plain object or string for JSON serialization
         const errorMessage = error.message || String(error);

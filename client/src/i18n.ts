@@ -41,26 +41,46 @@ i18n
           offline: 'Off-line (Epie)'
         }
       },
-      ogbia: {
+      hausa: {
         translation: {
-          dashboard: 'Dashboard (Ogbia)',
-          addLog: 'Add Transaction (Ogbia)',
-          transactions: 'Transactions (Ogbia)',
-          syncing: 'Syncing... (Ogbia)',
-          synced: 'Synced (Ogbia)',
-          offline: 'Off-line (Ogbia)'
+          dashboard: 'Dashboard (Hausa)',
+          addLog: 'Add Transaction (Hausa)',
+          transactions: 'Transactions (Hausa)',
+          syncing: 'Ana aiki...',
+          synced: 'An gama',
+          offline: 'Babu internet'
         }
       },
-      nembe: {
+      yoruba: {
         translation: {
-          dashboard: 'Dashboard (Nembe)',
-          addLog: 'Add Transaction (Nembe)',
-          transactions: 'Transactions (Nembe)',
-          syncing: 'Syncing... (Nembe)',
-          synced: 'Synced (Nembe)',
-          offline: 'Off-line (Nembe)'
+          dashboard: 'Dashboard (Yoruba)',
+          addLog: 'Add Transaction (Yoruba)',
+          transactions: 'Transactions (Yoruba)',
+          syncing: 'Ní ṣíṣiṣẹ...',
+          synced: 'Ti pari',
+          offline: 'Kò sí ayélujára'
         }
-      }
+      },
+      igbo: {
+        translation: {
+          dashboard: 'Dashboard (Igbo)',
+          addLog: 'Add Transaction (Igbo)',
+          transactions: 'Transactions (Igbo)',
+          syncing: 'Na-arụ ọrụ...',
+          synced: 'Emechala',
+          offline: 'Enweghị ịntanetị'
+        }
+      },
+      pidgin: {
+        translation: {
+          dashboard: 'Dashboard (Pidgin)',
+          addLog: 'Add Transaction (Pidgin)',
+          transactions: 'Transactions (Pidgin)',
+          syncing: 'We dey sync...',
+          synced: 'We don finish',
+          offline: 'No internet'
+        }
+      },
     }
   });
 

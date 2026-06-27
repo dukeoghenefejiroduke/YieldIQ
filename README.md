@@ -1,6 +1,6 @@
 # AgroVoice: Empowering Nigeria's Smallholder Farmers
 
-AgroVoice is a production-ready, offline-first Agrifintech platform designed to bridge the gap between Nigeria's unbanked smallholder farmers and modern financial systems. 
+AgroVoice is a production-ready, offline-first AgriFinTech platform designed to bridge the gap between Nigeria's unbanked smallholder farmers and modern financial systems. 
 
 ## The Problem
 Smallholder farmers, who produce the majority of Nigeria's food, face critical barriers:
@@ -9,25 +9,26 @@ Smallholder farmers, who produce the majority of Nigeria's food, face critical b
 *   **Literacy Barriers:** Language and technical complexity prevent farmers from adopting digital tools.
 
 ## The Solution
-AgroVoice provides a seamless, **offline-first digital ledger** that works in rural environments and synchronizes when connectivity is restored.
+AgroVoice provides a seamless, **offline-first digital ledger** that works in rural environments, offering inclusive financial and agricultural services.
 
-### Key Features
-*   **Offline-First:** Built on `Dexie.js`/SQLite to ensure no data loss in areas with poor internet.
-*   **Local AI Input:** Uses `Transformers.js` to parse voice/text transactions locally.
-*   **Dynamic Fintech Core:** Multi-modal credit scoring based on transactional history and cooperative participation.
-*   **Payment Integration:** Extensible payment gateway abstraction (Paystack/Flutterwave).
-*   **Accessibility (USSD):** USSD fallback for feature phones, enabling credit checking, market price queries, and transaction logging.
-*   **Market Intelligence:** Real-time price aggregation service for crops.
+### World-Class AgriFinTech Features
+*   **Offline-First Resilience:** Local database logging with exponential backoff synchronization for areas with 2G/3G coverage.
+*   **Inclusive Access:** USSD and SMS fallback gateways enable offline transaction logging and market intelligence queries for feature phone users.
+*   **Multilingual Support:** Full interface localization support for Hausa, Yoruba, Igbo, and Pidgin.
+*   **AI-Driven Behavioral Credit Scoring:** Dynamic credit scoring based on transaction history, making farmers bankable for formal micro-finance.
+*   **Localized Weather Risk Assessment:** Automated monitoring and micro-insurance trigger framework based on LGA-specific weather thresholds.
+*   **Market Intelligence:** Real-time crop market price aggregation.
 
 ## Architecture
 ```mermaid
 graph TD
-    A[Farmer Input: Voice/WhatsApp] --> B{Local AI Parser}
-    B --> C[(Offline SQLite/Dexie)]
-    C -- Sync --> D[Cloud Backend]
-    D --> E[OPay Gateway]
-    D --> F[Cooperative Credit Scoring]
+    A[Farmer Input: Voice/WhatsApp/SMS/USSD] --> B{Local AI Parser}
+    B --> C[(Offline Dexie DB)]
+    C -- Robust Sync (Backoff) --> D[Cloud Backend]
+    D --> E[Behavioral Credit Scoring Engine]
+    D --> F[Weather/Insurance Trigger]
+    D --> G[Cooperative Ledger]
 ```
 
 ## Impact
-AgroVoice directly addresses productivity and financial inclusion, turning traditional farming into data-driven, bankable enterprises.
+AgroVoice directly addresses productivity, financial inclusion, and risk mitigation, turning traditional farming into data-driven, bankable, and resilient enterprises.

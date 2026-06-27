@@ -6,6 +6,7 @@ import { useLogStore } from '../store/logStore';
 import { KPICards } from '../components/dashboard/KPICards';
 import { StatsView } from '../components/StatsView';
 import { VoiceEntry } from '../components/VoiceEntry';
+import { WeatherAlert } from '../components/ui/WeatherAlert';
 import { ConnectionStatus } from '../components/ui/ConnectionStatus';
 import { History, Cloud, CloudOff, RefreshCw, DollarSign, MessageSquare, Phone, BarChart } from 'lucide-react';
 import { useSync } from '../hooks/useSync';
@@ -67,6 +68,7 @@ export const Dashboard = () => {
     <MainLayout>
       <div className="min-h-screen pb-24">
       <ConnectionStatus />
+      <WeatherAlert />
       
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto px-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
@@ -192,6 +194,11 @@ export const Dashboard = () => {
                             <Cloud className="w-4 h-4 text-forest-light" />
                           )}
                         </div>
+                        {log.source && log.source !== 'app' && (
+                          <span className="text-[10px] uppercase font-bold text-forest-mid bg-forest-mid/10 px-2 py-0.5 rounded-full mb-2 inline-block">
+                             {log.source}
+                          </span>
+                        )}
                         <p className="text-sm line-clamp-2 group-hover:line-clamp-none transition-all">{log.transcription}</p>
                         {log.location && (
                           <div className="mt-2 text-[10px] font-mono text-text-secondary flex items-center gap-1">

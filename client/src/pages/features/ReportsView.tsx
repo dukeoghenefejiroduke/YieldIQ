@@ -18,6 +18,18 @@ export const ReportsView = () => {
 
   const totalFinancialAmount = financialLogs.reduce((acc, log) => acc + (log.amount || 0), 0);
 
+  // Dynamic Productivity Calculation
+  const now = Date.now();
+  const oneWeek = 7 * 24 * 60 * 60 * 1000;
+  const recentLogs = logs.filter(l => now - l.timestamp < oneWeek);
+  const oldLogs = logs.filter(l => now - l.timestamp >= oneWeek && now - l.timestamp < 2 * oneWeek);
+  
+  const productivityChange = oldLogs.length === 0 
+    ? (recentLogs.length > 0 ? 100 : 0) 
+    : ((recentLogs.length - oldLogs.length) / oldLogs.length) * 100;
+  
+  const productivityDisplay = `${productivityChange >= 0 ? '+' : ''}${productivityChange.toFixed(1)}%`;
+
   return (
     <MainLayout>
       <div className="max-w-7xl mx-auto px-6 py-10">
@@ -40,9 +52,9 @@ export const ReportsView = () => {
                 <p className="text-text-muted text-sm">Material Entries</p>
                 <p className="text-3xl font-extrabold">{materialLogs.length}</p>
               </div>
-              <div className="bg-background-card p-6 rounded-2xl border border-glass-border shadow-sm">
-                <p className="text-text-muted text-sm">Pending Sync</p>
-                <p className="text-3xl font-extrabold">{pendingCount}</p>
+              <div className="bg-background-card p-6 rounded-2xl border border-glass-border shadow-sm border-l-4 border-l-alert-success">
+                <p className="text-text-muted text-sm">Productivity Growth</p>
+                <p className="text-3xl font-extrabold text-alert-success">{productivityDisplay}</p>
               </div>
             </div>
 

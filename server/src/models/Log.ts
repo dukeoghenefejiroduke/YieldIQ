@@ -8,6 +8,7 @@ const LogSchema = new Schema({
   item: { type: String, required: true },
   transcription: { type: String, required: true },
   timestamp: { type: Number, required: true },
+  source: { type: String, enum: ['app', 'sms', 'ussd'], default: 'app' },
   location: {
     lat: Number,
     lng: Number
