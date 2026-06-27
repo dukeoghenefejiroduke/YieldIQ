@@ -21,7 +21,7 @@ export const syncLogs = async () => {
           item: log.item
         };
 
-        await api.post('logs', payload);
+        await api.post('/logs', payload);
         await db.logs.update(log.id!, { syncStatus: 'synced' });
         break;
       } catch {

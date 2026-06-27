@@ -29,7 +29,7 @@ export const ConnectionStatus = () => {
       }
 
       try {
-        await api.get('health');
+        await api.get('/health');
         if (isMounted) {
           setIsApiHealthy(true);
         }

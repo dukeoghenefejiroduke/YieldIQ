@@ -1,12 +1,13 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { MainLayout } from '../components/layout/MainLayout';
 import { useAuthStore } from '../store/authStore';
 import { useLogStore } from '../store/logStore';
 import { KPICards } from '../components/dashboard/KPICards';
+import { StatsView } from '../components/StatsView';
 import { VoiceEntry } from '../components/VoiceEntry';
 import { ConnectionStatus } from '../components/ui/ConnectionStatus';
-import { History, Cloud, CloudOff, RefreshCw, DollarSign } from 'lucide-react';
+import { History, Cloud, CloudOff, RefreshCw, DollarSign, MessageSquare, Phone, BarChart } from 'lucide-react';
 import { useSync } from '../hooks/useSync';
 import { getFarmerProfile } from '../services/farmerService';
 import { getMarketPrices } from '../services/marketService';
@@ -65,12 +66,23 @@ export const Dashboard = () => {
           )}
         </header>
 
+        <StatsView logsCount={logs.length} pendingCount={pendingCount} />
+
         <KPICards farmer={farmer} logs={logs} pendingCount={pendingCount} entriesCount={logs.length} productivity="+12%" />
         
-        <div className="mb-6">
+        <div className="mb-6 flex gap-4">
             <button onClick={() => navigate('/log-transaction')} className="bg-secondary text-primary px-6 py-2 rounded-lg font-bold">
                 + Log New Transaction
             </button>
+            <Link to="/whatsapp" className="bg-white border border-glass-border px-6 py-2 rounded-lg font-bold flex items-center gap-2">
+                <MessageSquare className="w-4 h-4" /> Whatsapp
+            </Link>
+            <Link to="/ussd" className="bg-white border border-glass-border px-6 py-2 rounded-lg font-bold flex items-center gap-2">
+                <Phone className="w-4 h-4" /> USSD
+            </Link>
+            <Link to="/reports" className="bg-white border border-glass-border px-6 py-2 rounded-lg font-bold flex items-center gap-2">
+                <BarChart className="w-4 h-4" /> Reports
+            </Link>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">

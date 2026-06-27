@@ -34,7 +34,7 @@ export const useAuth = () => {
     }
 
     try {
-      const { data } = await api.get('auth/me');
+      const { data } = await api.get('/auth/me');
       setLogin(data, token);
     } catch (error) {
       console.error('Session verification failed:', error);
@@ -47,7 +47,7 @@ export const useAuth = () => {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      const { data } = await api.post('auth/login', { email, password });
+      const { data } = await api.post('/auth/login', { email, password });
       setLogin(data.user, data.token);
       
       const state = location.state as LocationState;
@@ -71,10 +71,10 @@ export const useAuth = () => {
   const signup = async (payload: SignupPayload) => {
     setIsLoading(true);
     try {
-      await api.post('auth/signup', payload);
+      await api.post('/auth/signup', payload);
       
       // Auto-login after signup
-      const { data } = await api.post('auth/login', { 
+      const { data } = await api.post('/auth/login', { 
         email: payload.email, 
         password: payload.password 
       });

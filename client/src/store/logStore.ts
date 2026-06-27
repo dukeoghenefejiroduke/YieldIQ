@@ -57,7 +57,7 @@ export const useLogStore = create<LogState>((set, get) => ({
   fetchLogs: async () => {
     set({ isLoading: true });
     try {
-      const { data: cloudLogs } = await api.get('logs');
+      const { data: cloudLogs } = await api.get('/logs');
       const syncedLogs: UnifiedLog[] = cloudLogs.map((log: UnifiedLog) => ({
         ...log,
         syncStatus: 'synced' as const
