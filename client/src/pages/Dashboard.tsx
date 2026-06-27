@@ -24,17 +24,37 @@ export const Dashboard = () => {
 
   const fetchData = useCallback(async () => {
     fetchLogs();
-    try {
-      const [farmerData, pricesData] = await Promise.all([
-        getFarmerProfile(),
-        getMarketPrices()
-      ]);
-      setFarmer(farmerData);
-      setPrices(pricesData);
-    } catch (error) {
-      console.error('Failed to fetch dashboard data', error);
-    }
-  }, [fetchLogs]);
+    
+    const fetchFarmer = async () => {
+      try {
+        return await getFarmerProfile();
+      } catch (error: any) {
+        if (error.response?.status === 404) {
+          navigate('/create-profile');
+          return null;
+        }
+        console.error('Failed to fetch farmer profile', error);
+        return null;
+      }
+    };
+
+    const fetchPrices = async () => {
+      try {
+        return await getMarketPrices();
+      } catch (error) {
+        console.error('Failed to fetch market prices', error);
+        return [];
+      }
+    };
+
+    const [farmerData, pricesData] = await Promise.all([
+      fetchFarmer(),
+      fetchPrices()
+    ]);
+    
+    setFarmer(farmerData);
+    setPrices(pricesData);
+  }, [fetchLogs, navigate]);
 
   useEffect(() => {
     fetchData();
