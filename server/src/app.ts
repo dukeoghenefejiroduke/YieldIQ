@@ -111,7 +111,7 @@ for (const p of possiblePaths) {
 if (clientDistPath) {
   app.use(express.static(clientDistPath));
 } else {
-  console.error('CRITICAL ERROR: Could not locate client/dist directory in any expected location.');
+  console.warn('WARNING: Could not locate client/dist directory. Running in API-only mode.');
 }
 
 // Catch-all route using Regex to serve index.html for any non-API route
