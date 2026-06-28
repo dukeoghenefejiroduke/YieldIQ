@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import Log from '../models/Log.js';
 import Farmer from '../models/Farmer.js';
 import { creditScoringService } from '../services/creditScoringService.js';
+import { sendTransactionNotification } from '../services/notificationService.js';
 
 const router = Router();
 
@@ -67,6 +68,9 @@ router.post('/webhook', async (req, res) => {
         
         await newLog.save();
         await creditScoringService.recalculateFarmerScore(farmer._id.toString());
+        
+        // Send notification
+        await sendTransactionNotification(from, `AgroVoice: ${type} of ${item} for ₦${amount} recorded.`);
         
         res.status(200).send('Transaction logged successfully.');
     } catch (error) {

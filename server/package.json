@@ -18,6 +18,7 @@
     "node": ">=22.12.0"
   },
   "dependencies": {
+    "africastalking": "^0.8.0",
     "axios": "^1.18.1",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",

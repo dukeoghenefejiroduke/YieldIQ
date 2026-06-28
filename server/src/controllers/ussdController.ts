@@ -2,6 +2,8 @@ import Farmer from '../models/Farmer.js';
 import Log from '../models/Log.js';
 import { creditScoringService } from '../services/creditScoringService.js';
 import { priceAggregatorService } from '../services/priceAggregatorService.js';
+import { sendTransactionNotification } from '../services/notificationService.js';
+
 export const handleUSSDRequest = async (req, res) => {
     try {
         const { sessionId, serviceCode, phoneNumber, text } = req.body;
@@ -69,6 +71,10 @@ export const handleUSSDRequest = async (req, res) => {
                     if (farmer.cooperativeId) {
                         await creditScoringService.recalculateCooperativeScore(farmer.cooperativeId.toString());
                     }
+                    
+                    // Send notification
+                    await sendTransactionNotification(phoneNumber, `AgroVoice: Sale of ${cropItem} for ₦${amount} recorded.`);
+                    
                     responseText = `END Success! Logged sale of ${cropItem} for ₦${amount}.`;
                 }
             }
