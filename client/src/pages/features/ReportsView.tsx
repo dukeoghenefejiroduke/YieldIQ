@@ -9,7 +9,6 @@ export const ReportsView = () => {
     fetchLogs();
   }, [fetchLogs]);
 
-  const pendingCount = logs.filter(l => l.syncStatus === 'pending').length;
   const totalLogs = logs.length;
   
   // Categorization

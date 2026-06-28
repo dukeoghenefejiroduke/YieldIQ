@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../../services/api';
-import { AlertTriangle, CloudRain } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 export const WeatherAlert = () => {
     const [alert, setAlert] = useState<boolean>(false);

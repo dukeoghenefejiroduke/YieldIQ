@@ -1,4 +1,4 @@
-import { UnifiedLog } from '../store/logStore';
+import type { UnifiedLog } from '../store/logStore';
 
 /**
  * AI-Driven Behavioral Credit Scoring
