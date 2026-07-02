@@ -10,20 +10,28 @@ export default {
         sans: ['Inter', 'Poppins', 'system-ui', 'sans-serif'],
       },
       colors: {
-        primary: '#1B4D3E',
-        secondary: '#F4B942',
+        slate: {
+          900: '#1E293B',
+          600: '#475569',
+        },
+        green: {
+          900: '#166534',
+        },
+        gray: {
+          50: '#F1F5F9',
+        },
         background: {
-          DEFAULT: '#F8FAF9',
-          card: '#FFFFFF',
+          DEFAULT: '#1E293B', // Deep Slate
+          card: '#475569',   // Clay/Muted Earth
         },
         text: {
-          primary: '#1E1E1E',
-          secondary: '#5A6B66',
-          muted: '#9AA6A2',
+          primary: '#F1F5F9', // High-visibility
+          secondary: '#F1F5F9',
+          muted: '#CBD5E1',
         },
         alert: {
-          danger: '#D95B43',
-          success: '#2E9E6F',
+          danger: '#EF4444',
+          success: '#22C55E',
         },
       },
     },

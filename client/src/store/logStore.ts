@@ -26,6 +26,7 @@ interface LogState {
   isSyncing: boolean;
   syncMessage: string | null;
   demoMode: boolean;
+  pendingCount: number; // Added
   toggleDemoMode: () => void;
   fetchLogs: () => Promise<void>;
   addLocalLog: (log: Omit<LogEntry, 'id' | 'syncStatus'>) => Promise<void>;
@@ -42,6 +43,7 @@ export const useLogStore = create<LogState>((set, get) => ({
   isSyncing: false,
   syncMessage: null,
   demoMode: false,
+  pendingCount: 0, // Added
   toggleDemoMode: () => set((state) => ({ demoMode: !state.demoMode })),
 
   updateScore: () => {
@@ -81,14 +83,15 @@ export const useLogStore = create<LogState>((set, get) => ({
       }));
 
       const combined = [...pendingLogs, ...syncedLogs].sort((a, b) => b.timestamp - a.timestamp);
-      set({ logs: combined, isLoading: false });
+      set({ logs: combined, isLoading: false, pendingCount: pendingLogs.length });
       get().updateScore();
     } catch (error) {
       console.error('Failed to fetch logs:', error);
       const localLogs = await db.logs.where('syncStatus').equals('pending').toArray();
       set({ 
         logs: localLogs.map(l => ({ ...l, syncStatus: 'pending' as const })), 
-        isLoading: false 
+        isLoading: false,
+        pendingCount: localLogs.length
       });
       get().updateScore();
     }
@@ -103,7 +106,8 @@ export const useLogStore = create<LogState>((set, get) => ({
     
     const unifiedLog: UnifiedLog = { ...newLog, id, syncStatus: 'pending' };
     set((state) => ({
-      logs: [unifiedLog, ...state.logs].sort((a, b) => b.timestamp - a.timestamp)
+      logs: [unifiedLog, ...state.logs].sort((a, b) => b.timestamp - a.timestamp),
+      pendingCount: state.pendingCount + 1
     }));
     get().updateScore();
     

@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Wifi, WifiOff } from 'lucide-react';
+import { WifiOff, CloudUpload } from 'lucide-react';
 import api from '../../services/api';
+import { useLogStore } from '../../store/logStore';
 
 export const ConnectionStatus = () => {
+  const pendingCount = useLogStore((state) => state.pendingCount);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [isApiHealthy, setIsApiHealthy] = useState<boolean | null>(null);
 
@@ -51,20 +53,25 @@ export const ConnectionStatus = () => {
 
   const isConnected = isOnline && isApiHealthy === true;
 
-  if (isApiHealthy === false) return null;
+  if (isConnected && pendingCount === 0) return null;
 
   return (
-    <div className={`fixed bottom-6 right-6 z-50 px-4 py-2 rounded-full glass-card flex items-center gap-2 shadow-2xl transition-all duration-500 ${
-      isConnected ? 'border-forest-light' : 'border-red-400'
+    <div className={`p-2 text-center text-xs flex items-center justify-center gap-2 border-b ${
+      !isConnected 
+        ? 'bg-amber-100 border-amber-200 text-amber-900' 
+        : 'bg-emerald-100 border-emerald-200 text-emerald-900'
     }`}>
-      <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-forest-light animate-pulse' : 'bg-red-500'}`} />
-      <span className="text-sm font-medium">
-        {isConnected ? (
-          <span className="flex items-center gap-1.5"><Wifi className="w-4 h-4" /> API Connected</span>
-        ) : (
-          <span className="flex items-center gap-1.5 text-red-500"><WifiOff className="w-4 h-4" /> API Offline</span>
-        )}
-      </span>
+      {!isConnected ? (
+        <>
+          <WifiOff className="w-3 h-3 text-amber-700" />
+          <span>Offline {pendingCount > 0 ? `- ${pendingCount} items waiting for sync` : '- Limited Functionality'}</span>
+        </>
+      ) : (
+        <>
+          <CloudUpload className="w-3 h-3 text-emerald-700" />
+          <span>{pendingCount} items pending sync</span>
+        </>
+      )}
     </div>
   );
 };
