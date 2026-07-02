@@ -4,14 +4,14 @@ import { MainLayout } from '../components/layout/MainLayout';
 import { useAuthStore } from '../store/authStore';
 import { useLogStore } from '../store/logStore';
 import { ConnectionStatus } from '../components/ui/ConnectionStatus';
-import { Basket, Scale, Sprout, Shield, TrendingUp, AlertTriangle, ArrowUp, AlertCircle } from 'lucide-react';
+import { ShoppingBasket, Scale, Sprout, Shield, TrendingUp, AlertTriangle, ArrowUp } from 'lucide-react';
 import { useSync } from '../hooks/useSync';
 import { getFarmerProfile } from '../services/farmerService';
 import { getMarketPrices } from '../services/marketService';
 
 export const Dashboard = () => {
   const { user } = useAuthStore();
-  const { logs, fetchLogs } = useLogStore();
+  const { pendingCount, fetchLogs } = useLogStore();
   const navigate = useNavigate();
   const [farmer, setFarmer] = useState<any>(null);
   const [marketTrends, setMarketTrends] = useState<any[]>([]);
@@ -60,12 +60,12 @@ export const Dashboard = () => {
                 <p className="text-[10px] text-gray-400 mt-2">Tip: Keep a small buffer for unexpected farm costs.</p>
             </div>
             <div className="bg-slate-600 p-4 rounded-xl">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-center">
                     <div>
                         <p className="text-sm text-gray-300">Pending</p>
                         <p className="text-2xl font-bold">{pendingCount}</p>
                     </div>
-                    {pendingCount > 0 && <AlertTriangle className="text-red-400" />}
+                    {pendingCount > 0 && <AlertTriangle className="text-red-400 ml-2" />}
                 </div>
                 <p className="text-[10px] text-gray-400 mt-2">Tip: Syncing regularly improves your credit score faster.</p>
             </div>
@@ -93,7 +93,7 @@ export const Dashboard = () => {
         {/* Actions (4 Grid) */}
         <div className="grid grid-cols-2 gap-4">
             <button className="bg-green-900 p-6 rounded-xl flex flex-col items-center gap-2" onClick={() => navigate('/log-transaction')}>
-                <Basket className="w-8 h-8" />
+                <ShoppingBasket className="w-8 h-8" />
                 <span className="text-sm font-bold">Record Harvest</span>
             </button>
             <button className="bg-slate-600 p-6 rounded-xl flex flex-col items-center gap-2" onClick={() => navigate('/market')}>

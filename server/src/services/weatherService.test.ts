@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { fetchLocalizedWeather } from './weatherService';
+import { fetchLocalizedWeather } from './weatherService.js';
 
 describe('weatherService', () => {
     it('should throw error when OPENWEATHERMAP_API_KEY is not set', async () => {
