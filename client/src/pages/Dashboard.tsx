@@ -4,14 +4,17 @@ import { MainLayout } from '../components/layout/MainLayout';
 import { useAuthStore } from '../store/authStore';
 import { useLogStore } from '../store/logStore';
 import { ConnectionStatus } from '../components/ui/ConnectionStatus';
-import { ShoppingBasket, Scale, Sprout, Shield, TrendingUp, AlertTriangle, ArrowUp } from 'lucide-react';
+import { TrendingUp, ArrowUp, CloudUpload, RefreshCw, ShoppingBasket, Scale, Sprout, Shield } from 'lucide-react';
 import { useSync } from '../hooks/useSync';
 import { getFarmerProfile } from '../services/farmerService';
 import { getMarketPrices } from '../services/marketService';
+import { EducationalTip } from '../components/ui/EducationalTip';
+import { FieldForecast } from '../components/ui/FieldForecast';
+import { CommunityBenchmark } from '../components/ui/CommunityBenchmark';
 
 export const Dashboard = () => {
   const { user } = useAuthStore();
-  const { pendingCount, fetchLogs } = useLogStore();
+  const { pendingCount, fetchLogs, syncLogs, isSyncing } = useLogStore();
   const navigate = useNavigate();
   const [farmer, setFarmer] = useState<any>(null);
   const [marketTrends, setMarketTrends] = useState<any[]>([]);
@@ -40,44 +43,65 @@ export const Dashboard = () => {
 
   return (
     <MainLayout>
-      <div className="bg-slate-900 min-h-screen text-gray-50 p-4 space-y-6">
+      <div className="bg-slate-900 min-h-screen text-gray-50 space-y-6">
         <ConnectionStatus />
 
-        {/* Header/Profile */}
-        <header className="flex justify-between items-center">
-            <h1 className="text-2xl font-black text-white">Field Command Center</h1>
-            <div className="w-10 h-10 rounded-full bg-slate-600 flex items-center justify-center font-bold">
-                {farmer?.name?.charAt(0) || user?.username?.charAt(0) || 'U'}
-            </div>
+        {/* Personalized Welcome */}
+        <header>
+            <h1 className="text-2xl font-black text-white">Welcome, {farmer?.name || 'Farmer'}</h1>
+            <p className="text-gray-400">Manage your farm operations seamlessly.</p>
         </header>
 
+        {/* Educational Tip */}
+        <EducationalTip 
+            title="Grow Your Credit" 
+            message="Logging transactions consistently and syncing your data helps build a credit profile that qualifies you for better insurance and loans."
+        />
 
-        {/* Metrics (2 Cards) */}
+        <FieldForecast />
+        <CommunityBenchmark />
+
+        {/* Metrics */}
         <div className="grid grid-cols-2 gap-4">
             <div className="bg-slate-600 p-4 rounded-xl">
-                <p className="text-sm text-gray-300">Wallet</p>
+                <p className="text-sm text-gray-300">Wallet Balance</p>
                 <p className="text-2xl font-bold">₦{farmer?.balance || '0'}</p>
-                <p className="text-[10px] text-gray-400 mt-2">Tip: Keep a small buffer for unexpected farm costs.</p>
             </div>
-            <div className="bg-slate-600 p-4 rounded-xl">
-                <div className="flex items-center justify-center">
-                    <div>
-                        <p className="text-sm text-gray-300">Pending</p>
-                        <p className="text-2xl font-bold">{pendingCount}</p>
+            {pendingCount > 0 ? (
+                <button 
+                    onClick={syncLogs}
+                    disabled={isSyncing}
+                    className="bg-amber-600 p-4 rounded-xl flex flex-col justify-between items-start active:scale-95 transition-transform"
+                >
+                    <div className="flex items-center gap-2">
+                        <CloudUpload className="w-5 h-5" />
+                        <p className="text-sm font-bold">Pending Sync</p>
                     </div>
-                    {pendingCount > 0 && <AlertTriangle className="text-red-400 ml-2" />}
+                    <p className="text-2xl font-bold">{pendingCount} items</p>
+                    <p className="text-xs mt-1 flex items-center gap-1 font-semibold text-white/80">
+                        <RefreshCw className={`w-3 h-3 ${isSyncing ? 'animate-spin' : ''}`} /> 
+                        {isSyncing ? 'Syncing...' : 'Sync Now'}
+                    </p>
+                </button>
+            ) : (
+                <div className="bg-slate-700 p-4 rounded-xl">
+                    <p className="text-sm text-gray-300">Sync Status</p>
+                    <p className="text-2xl font-bold text-green-400">Synced</p>
                 </div>
-                <p className="text-[10px] text-gray-400 mt-2">Tip: Syncing regularly improves your credit score faster.</p>
-            </div>
+            )}
         </div>
 
-        {/* Market Trends (New Section) */}
+        {/* Market Trends (Top 3) */}
         <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
-            <h2 className="text-lg font-bold mb-4 flex items-center gap-2"><TrendingUp /> Market Signals</h2>
+            <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-white"><TrendingUp className="text-green-400" /> Top Market Signals</h2>
             <div className="space-y-3">
-                {marketTrends.map(trend => (
-                    <div key={trend.crop} className="flex justify-between items-center bg-slate-700 p-3 rounded-lg">
-                        <span className="font-bold">{trend.crop}</span>
+                {marketTrends.slice(0, 3).map(trend => (
+                    <button 
+                        key={trend.crop} 
+                        onClick={() => navigate('/log-transaction', { state: { prefillItem: trend.crop } })}
+                        className="w-full flex justify-between items-center bg-slate-700 p-3 rounded-lg active:scale-95 transition-transform"
+                    >
+                        <span className="font-bold text-white">{trend.crop}</span>
                         {trend.sellSignal ? (
                             <span className="bg-green-900 text-green-100 text-xs px-2 py-1 rounded flex items-center gap-1 font-bold">
                                 <ArrowUp className="w-3 h-3"/> SELL NOW
@@ -85,29 +109,9 @@ export const Dashboard = () => {
                         ) : (
                             <span className="text-gray-400 text-xs">Wait</span>
                         )}
-                    </div>
+                    </button>
                 ))}
             </div>
-        </div>
-
-        {/* Actions (4 Grid) */}
-        <div className="grid grid-cols-2 gap-4">
-            <button className="bg-green-900 p-6 rounded-xl flex flex-col items-center gap-2" onClick={() => navigate('/log-transaction')}>
-                <ShoppingBasket className="w-8 h-8" />
-                <span className="text-sm font-bold">Record Harvest</span>
-            </button>
-            <button className="bg-slate-600 p-6 rounded-xl flex flex-col items-center gap-2" onClick={() => navigate('/market')}>
-                <Scale className="w-8 h-8" />
-                <span className="text-sm font-bold">Check Market</span>
-            </button>
-            <button className="bg-slate-600 p-6 rounded-xl flex flex-col items-center gap-2" onClick={() => navigate('/crops')}>
-                <Sprout className="w-8 h-8" />
-                <span className="text-sm font-bold">Update Crops</span>
-            </button>
-            <button className="bg-slate-600 p-6 rounded-xl flex flex-col items-center gap-2" onClick={() => navigate('/credit')}>
-                <Shield className="w-8 h-8" />
-                <span className="text-sm font-bold">Credit Score</span>
-            </button>
         </div>
       </div>
     </MainLayout>

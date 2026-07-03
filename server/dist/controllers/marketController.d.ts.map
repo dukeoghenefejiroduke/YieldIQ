@@ -1,1 +1,1 @@
-{"version":3,"file":"marketController.d.ts","sourceRoot":"","sources":["../../src/controllers/marketController.ts"],"names":[],"mappings":"AACA,eAAO,MAAM,eAAe,GAAU,QAAG,EAAE,QAAG,kBAQ7C,CAAC"}
+{"version":3,"file":"marketController.d.ts","sourceRoot":"","sources":["../../src/controllers/marketController.ts"],"names":[],"mappings":"AAGA,eAAO,MAAM,eAAe,GAAU,QAAG,EAAE,QAAG,kBAQ7C,CAAC;AAEF,eAAO,MAAM,eAAe,GAAU,KAAK,GAAG,EAAE,KAAK,GAAG,iBAUvD,CAAC"}

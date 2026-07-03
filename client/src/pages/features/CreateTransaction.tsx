@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { MainLayout } from '../../components/layout/MainLayout';
 import { createTransaction } from '../../services/logService';
 import toast from 'react-hot-toast';
@@ -7,10 +7,11 @@ import { MapPin, QrCode } from 'lucide-react';
 import { ScannerComponent } from '../../components/ui/ScannerComponent';
 
 export const CreateTransaction = () => {
+  const locationState = useLocation().state as { prefillItem?: string } | null;
   const [formData, setFormData] = useState({
     type: 'sale',
     amount: 0,
-    item: '',
+    item: locationState?.prefillItem || '',
     transcription: '',
     location: null as { lat: number; lng: number } | null
   });
@@ -99,7 +100,7 @@ export const CreateTransaction = () => {
             {isFetchingLocation ? 'Detecting location...' : (formData.location ? '✓ Location automatically captured' : 'Location not captured')}
           </div>
 
-          <button type="submit" className="w-full p-3 bg-green-900 text-white rounded-lg font-bold">Log Transaction</button>
+          <button type="submit" className="w-full p-3 bg-green-900 text-white rounded-lg font-bold active:scale-95 transition-transform">Log Transaction</button>
         </form>
       </div>
     </MainLayout>

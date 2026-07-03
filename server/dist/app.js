@@ -16,9 +16,14 @@ import whatsappRoutes from './routes/whatsappRoutes.js';
 import ussdRoutes from './routes/ussdRoutes.js';
 import farmerRoutes from './routes/farmerRoutes.js';
 import marketRoutes from './routes/marketRoutes.js';
+import weatherRoutes from './routes/weatherRoutes.js';
+import smsRoutes from './routes/smsRoutes.js';
+import conversationRoutes from './routes/conversationRoutes.js';
+import { startCronJobs } from './cronJobs.js';
 dotenv.config();
 const app = express();
 connectDB();
+startCronJobs();
 // Security Middleware
 app.use(helmet({
     contentSecurityPolicy: false,
@@ -60,6 +65,9 @@ app.use('/api/whatsapp', whatsappRoutes);
 app.use('/api/ussd', ussdRoutes);
 app.use('/api/farmer', farmerRoutes);
 app.use('/api/market', marketRoutes);
+app.use('/api/weather', weatherRoutes);
+app.use('/api/sms', smsRoutes);
+app.use('/api/conversation', conversationRoutes);
 // Health check endpoint
 app.get('/api/health', (req, res) => {
     res.json({

@@ -12,3 +12,15 @@ export const getWeatherAlert = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch weather status' });
     }
 };
+
+export const getForecast = async (req, res) => {
+    try {
+        // In a real app, get LGA from farmer profile
+        const lga = 'Bayelsa';
+        const weather = await fetchLocalizedWeather(lga);
+        res.json({ temp: 28, condition: 'Sunny', ...weather }); // Placeholder structure
+    } catch (error) {
+        console.error('Weather error:', error);
+        res.status(500).json({ error: 'Failed to fetch forecast' });
+    }
+};

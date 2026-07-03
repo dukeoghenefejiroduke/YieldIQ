@@ -1,6 +1,17 @@
 import crypto from 'crypto';
 import Log from '../models/Log.js';
 import Farmer from '../models/Farmer.js';
+
+export const getMessages = async (req, res) => {
+    try {
+        const logs = await Log.find({}).sort({ timestamp: -1 }); // Simplified for demo
+        res.json(logs);
+    } catch (error) {
+        console.error('WhatsApp Logs Error:', error);
+        res.status(500).json({ error: 'Failed to fetch messages' });
+    }
+};
+
 // Verify WhatsApp webhook signature
 const verifySignature = (payload, signature) => {
     const hmac = crypto.createHmac('sha256', process.env.WHATSAPP_APP_SECRET || '');

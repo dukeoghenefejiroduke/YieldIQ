@@ -1,12 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Mic } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
+import { useSpeechRecognition } from '../../hooks/useSpeechRecognition';
 
 export const ConversationView = () => {
     const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
     const [input, setInput] = useState('');
     const { user } = useAuthStore();
+    const { isRecording, transcript, startRecording, stopRecording } = useSpeechRecognition();
+
+    // Sync transcript to input
+    useEffect(() => {
+        if (transcript) {
+            setInput(transcript);
+        }
+    }, [transcript]);
 
     const sendMessage = async () => {
         if (!input.trim() || !user?.id) return;
@@ -34,6 +44,12 @@ export const ConversationView = () => {
                 ))}
             </div>
             <div className="flex gap-2">
+                <button 
+                    onClick={isRecording ? stopRecording : startRecording}
+                    className={`p-2 rounded ${isRecording ? 'bg-alert-danger text-white animate-pulse' : 'bg-secondary text-white'}`}
+                >
+                    <Mic className="w-5 h-5" />
+                </button>
                 <input 
                     value={input}
                     onChange={(e) => setInput(e.target.value)}

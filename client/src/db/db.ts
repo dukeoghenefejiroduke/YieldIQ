@@ -13,6 +13,13 @@ export interface LogEntry {
   syncStatus: 'pending' | 'synced';
 }
 
+export interface TaskEntry {
+  id?: number;
+  userId: string;
+  title: string;
+  completed: boolean;
+}
+
 export interface Farmer {
   id?: number;
   name: string;
@@ -22,15 +29,18 @@ export interface Farmer {
 
 export class AgroDatabase extends Dexie {
   logs!: Table<LogEntry>;
+  tasks!: Table<TaskEntry>;
   farmers!: Table<Farmer>;
 
   constructor() {
     super('AgroVoiceDB');
-    this.version(2).stores({
+    this.version(3).stores({
       logs: '++id, userId, syncStatus, type, farmerId',
+      tasks: '++id, userId, completed',
       farmers: '++id, name, creditScore'
     });
   }
+...
 
   async updateFarmerCreditScore(farmerId: number, amount: number, type: 'sale' | 'purchase' | 'credit') {
     const farmer = await this.farmers.get(farmerId);

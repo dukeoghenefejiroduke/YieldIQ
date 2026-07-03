@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 declare const _default: mongoose.Model<{
     type: "sale" | "purchase" | "credit";
+    source: "app" | "sms" | "ussd";
     userId: mongoose.Types.ObjectId;
     amount: number;
     item: string;
@@ -16,6 +17,7 @@ declare const _default: mongoose.Model<{
     id: string;
 }, mongoose.Document<unknown, {}, {
     type: "sale" | "purchase" | "credit";
+    source: "app" | "sms" | "ussd";
     userId: mongoose.Types.ObjectId;
     amount: number;
     item: string;
@@ -33,6 +35,7 @@ declare const _default: mongoose.Model<{
     timestamps: true;
 }> & Omit<{
     type: "sale" | "purchase" | "credit";
+    source: "app" | "sms" | "ussd";
     userId: mongoose.Types.ObjectId;
     amount: number;
     item: string;
@@ -54,6 +57,7 @@ declare const _default: mongoose.Model<{
     timestamps: true;
 }, {
     type: "sale" | "purchase" | "credit";
+    source: "app" | "sms" | "ussd";
     userId: mongoose.Types.ObjectId;
     amount: number;
     item: string;
@@ -67,6 +71,7 @@ declare const _default: mongoose.Model<{
     } | null;
 } & mongoose.DefaultTimestampProps, mongoose.Document<unknown, {}, {
     type: "sale" | "purchase" | "credit";
+    source: "app" | "sms" | "ussd";
     userId: mongoose.Types.ObjectId;
     amount: number;
     item: string;
@@ -84,6 +89,7 @@ declare const _default: mongoose.Model<{
     timestamps: true;
 }> & Omit<{
     type: "sale" | "purchase" | "credit";
+    source: "app" | "sms" | "ussd";
     userId: mongoose.Types.ObjectId;
     amount: number;
     item: string;
@@ -103,6 +109,7 @@ declare const _default: mongoose.Model<{
     id: string;
 }, unknown, {
     type: "sale" | "purchase" | "credit";
+    source: "app" | "sms" | "ussd";
     userId: mongoose.Types.ObjectId;
     amount: number;
     item: string;
@@ -122,6 +129,7 @@ declare const _default: mongoose.Model<{
     __v: number;
 }>, {
     type: "sale" | "purchase" | "credit";
+    source: "app" | "sms" | "ussd";
     userId: mongoose.Types.ObjectId;
     amount: number;
     item: string;

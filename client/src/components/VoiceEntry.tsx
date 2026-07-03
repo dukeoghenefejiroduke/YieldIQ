@@ -1,38 +1,16 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { Mic, MapPin } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useLogStore } from '../store/logStore';
 import { parseTransaction } from '../utils/aiParser';
-
-interface SpeechRecognitionEventLike {
-  resultIndex: number;
-  results: {
-    length: number;
-    [index: number]: {
-      [index: number]: {
-        transcript: string;
-      };
-    };
-  };
-}
-
-interface SpeechRecognitionLike {
-  continuous: boolean;
-  interimResults: boolean;
-  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
-  start: () => void;
-  stop: () => void;
-}
-
-type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
+import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
 
 export const VoiceEntry = () => {
-  const [isRecording, setIsRecording] = useState(false);
-  const [transcript, setTranscript] = useState('');
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
-  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
+  
+  const { isRecording, transcript, setTranscript, startRecording: hookStartRecording, stopRecording } = useSpeechRecognition();
   
   const { user } = useAuthStore();
   const addLocalLog = useLogStore((state) => state.addLocalLog);
@@ -60,40 +38,9 @@ export const VoiceEntry = () => {
   };
 
   const startRecording = () => {
-    // ... (SpeechRecognition init remains same)
-    const speechWindow = window as Window & {
-      SpeechRecognition?: SpeechRecognitionConstructor;
-      webkitSpeechRecognition?: SpeechRecognitionConstructor;
-    };
-    const SpeechRecognition = speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      toast.error('Browser does not support voice recognition');
-      return;
-    }
-    const recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.onresult = (event) => {
-      let currentTranscript = '';
-      for (let i = 0; i < event.results.length; ++i) {
-        currentTranscript += event.results[i][0].transcript;
-      }
-      setTranscript(currentTranscript);
-    };
-    recognition.start();
-    recognitionRef.current = recognition;
-    setIsRecording(true);
-    
     // Auto-fetch location when recording starts
     if (!location) fetchLocation();
-    
-    toast.success('Recording started...', { icon: '🎤' });
-  };
-
-  const stopRecording = () => {
-    recognitionRef.current?.stop();
-    setIsRecording(false);
-    toast('Recording stopped', { icon: '⏹️' });
+    hookStartRecording();
   };
 
   const saveLog = async () => {

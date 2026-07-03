@@ -4,8 +4,20 @@ import { creditScoringService } from '../services/creditScoringService.js';
 import { priceAggregatorService } from '../services/priceAggregatorService.js';
 import { sendTransactionNotification } from '../services/notificationService.js';
 
-export const handleUSSDRequest = async (req, res) => {
+export const getLogs = async (req, res) => {
     try {
+        // Fetch logs related to USSD - this is a simplification
+        const logs = await Log.find({ transcription: { $regex: 'Logged via USSD' } }).sort({ timestamp: -1 });
+        res.json(logs);
+    } catch (error) {
+        console.error('USSD Logs Error:', error);
+        res.status(500).json({ error: 'Failed to fetch logs' });
+    }
+};
+
+export const handleUSSDRequest = async (req, res) => {
+...
+
         const { sessionId, serviceCode, phoneNumber, text } = req.body;
         console.log('USSD Request:', { sessionId, serviceCode, phoneNumber, text });
         // Lookup farmer by phone number

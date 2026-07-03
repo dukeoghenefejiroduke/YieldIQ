@@ -10,7 +10,7 @@ export const ReportsView = () => {
   }, [fetchLogs]);
 
   const totalLogs = logs.length;
-  
+
   // Categorization
   const financialLogs = logs.filter(l => l.type === 'sale' || l.type === 'purchase' || l.type === 'credit');
   const materialLogs = logs.filter(l => l.type !== 'sale' && l.type !== 'purchase' && l.type !== 'credit');
@@ -22,12 +22,13 @@ export const ReportsView = () => {
   const oneWeek = 7 * 24 * 60 * 60 * 1000;
   const recentLogs = logs.filter(l => now - l.timestamp < oneWeek);
   const oldLogs = logs.filter(l => now - l.timestamp >= oneWeek && now - l.timestamp < 2 * oneWeek);
-  
+
   const productivityChange = oldLogs.length === 0 
     ? (recentLogs.length > 0 ? 100 : 0) 
     : ((recentLogs.length - oldLogs.length) / oldLogs.length) * 100;
-  
+
   const productivityDisplay = `${productivityChange >= 0 ? '+' : ''}${productivityChange.toFixed(1)}%`;
+...
 
   return (
     <MainLayout>
