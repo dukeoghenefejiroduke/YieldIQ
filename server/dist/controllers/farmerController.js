@@ -13,6 +13,15 @@ export const getFarmerProfile = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch farmer profile' });
     }
 };
+export const getBenchmark = async (req, res) => {
+    try {
+        // Mock implementation of benchmark
+        res.json({ percentile: 75 });
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Failed to fetch benchmark' });
+    }
+};
 export const createFarmerProfile = async (req, res) => {
     try {
         const rawUserId = req.user?.userId;
