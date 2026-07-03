@@ -11,6 +11,12 @@ import { EducationalTip } from '../components/ui/EducationalTip';
 import { FieldForecast } from '../components/ui/FieldForecast';
 import { CommunityBenchmark } from '../components/ui/CommunityBenchmark';
 
+const MOCK_MARKET_TRENDS = [
+    { crop: 'Cassava', price: 450, unit: 'kg', region: 'Rivers', sellSignal: false },
+    { crop: 'Maize', price: 650, unit: 'mudu', region: 'Rivers', sellSignal: true },
+    { crop: 'Yam', price: 1200, unit: 'tuber', region: 'Rivers', sellSignal: false }
+];
+
 export const Dashboard = () => {
   const { pendingCount, fetchLogs, syncLogs, isSyncing } = useLogStore();
   const navigate = useNavigate();
@@ -27,11 +33,12 @@ export const Dashboard = () => {
           getMarketPrices()
       ]);
       setFarmer(profile);
-      setMarketTrends(trends);
+      setMarketTrends(trends.length > 0 ? trends : MOCK_MARKET_TRENDS);
     } catch (error: any) {
       if (error.response?.status === 404) {
         navigate('/create-profile');
       }
+      setMarketTrends(MOCK_MARKET_TRENDS);
     }
   }, [fetchLogs, navigate]);
 

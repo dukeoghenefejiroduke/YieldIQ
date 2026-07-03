@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { LayoutDashboard, BarChart, Settings, Globe, LogOut, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -8,6 +8,17 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const settingsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (settingsRef.current && !settingsRef.current.contains(event.target as Node)) {
+        setIsSettingsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
@@ -23,7 +34,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
           <SyncIndicator />
           <div className="flex items-center gap-4">
             <Globe className="w-5 h-5 cursor-pointer text-gray-300" />
-            <div className="relative">
+            <div className="relative" ref={settingsRef}>
                 <button 
                     onClick={() => setIsSettingsOpen(!isSettingsOpen)}
                     className="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center text-white text-xs"

@@ -16,14 +16,10 @@ export const handleConversation = async (req: Request, res: Response) => {
         }
         
         chatSession.messages.push({ role: 'user', content: message });
-        
-        // Mock LLM response
-        const aiResponse = `I received your message: "${message}". As an AI assistant, I am still under development.`;
-        
-        chatSession.messages.push({ role: 'assistant', content: aiResponse });
         await chatSession.save();
         
-        res.status(200).json({ response: aiResponse });
+        // No LLM integrated yet
+        res.status(501).json({ error: 'AI Assistant service not yet integrated' });
     } catch (error) {
         res.status(500).json({ error: 'Failed to process conversation' });
     }

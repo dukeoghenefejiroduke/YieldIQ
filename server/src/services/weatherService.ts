@@ -1,28 +1,31 @@
 import axios from 'axios';
 
-/**
- * Weather Insurance Service Architecture
- * 
- * Purpose: Monitor localized weather data and trigger micro-insurance
- * events based on predefined agricultural risk thresholds.
- */
-
 export interface WeatherData {
     lga: string;
     rainfallMm: number;
     thresholdMm: number;
+    temp: number;
+    condition: string;
 }
 
 export const checkInsuranceTrigger = async (weather: WeatherData): Promise<boolean> => {
     return weather.rainfallMm < (weather.thresholdMm * 0.5);
 };
 
-export const fetchLocalizedWeather = async (lga: string) => {
-    // Safely attempt to access environment variable
-    const apiKey = process.env.OPENWEATHERMAP_API_KEY || 'dummy_key';
+export const fetchLocalizedWeather = async (lga: string): Promise<WeatherData> => {
+    const apiKey = process.env.OPENWEATHERMAP_API_KEY;
+    if (!apiKey) {
+        throw new Error('OPENWEATHERMAP_API_KEY is not configured');
+    }
     
-    console.log(`Fetching weather data for LGA: ${lga}`);
+    // Call real API
+    const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${lga}&units=metric&appid=${apiKey}`);
     
-    // Returning dummy data for placeholder structure, removing throw
-    return { lga, rainfallMm: 10, thresholdMm: 50 };
+    return {
+        lga,
+        temp: Math.round(response.data.main.temp),
+        condition: response.data.weather[0].main,
+        rainfallMm: response.data.rain?.['1h'] || 0,
+        thresholdMm: 50 // Static threshold for this context
+    };
 };
