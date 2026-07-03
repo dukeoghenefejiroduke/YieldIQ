@@ -1,6 +1,8 @@
 import { Router } from 'express';
-import { handleUSSDRequest } from '../controllers/ussdController.js';
+import { handleUSSDRequest, getLogs } from '../controllers/ussdController.js';
+import { authMiddleware } from '../middleware/authMiddleware.js';
 const router = Router();
 router.post('/', handleUSSDRequest);
+router.get('/logs', authMiddleware, getLogs);
 export default router;
 //# sourceMappingURL=ussdRoutes.js.map

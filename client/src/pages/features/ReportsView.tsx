@@ -2,6 +2,12 @@ import { useEffect } from 'react';
 import { MainLayout } from '../../components/layout/MainLayout';
 import { useLogStore } from '../../store/logStore';
 
+// Mock data for fallback
+const MOCK_LOGS = [
+  { id: 1, type: 'sale', amount: 5000, item: 'Maize', transcription: 'Sold maize', timestamp: Date.now() - 100000, syncStatus: 'synced' },
+  { id: 2, type: 'credit', amount: 1000, item: 'Seeds', transcription: 'Bought seeds', timestamp: Date.now() - 50000, syncStatus: 'synced' },
+];
+
 export const ReportsView = () => {
   const { logs, fetchLogs, isLoading } = useLogStore();
 
@@ -9,26 +15,27 @@ export const ReportsView = () => {
     fetchLogs();
   }, [fetchLogs]);
 
-  const totalLogs = logs.length;
-
+  const displayLogs = logs.length > 0 ? logs : MOCK_LOGS as any[];
+  
+  const totalLogs = displayLogs.length;
+  
   // Categorization
-  const financialLogs = logs.filter(l => l.type === 'sale' || l.type === 'purchase' || l.type === 'credit');
-  const materialLogs = logs.filter(l => l.type !== 'sale' && l.type !== 'purchase' && l.type !== 'credit');
+  const financialLogs = displayLogs.filter(l => l.type === 'sale' || l.type === 'purchase' || l.type === 'credit');
+  const materialLogs = displayLogs.filter(l => l.type !== 'sale' && l.type !== 'purchase' && l.type !== 'credit');
 
   const totalFinancialAmount = financialLogs.reduce((acc, log) => acc + (log.amount || 0), 0);
 
   // Dynamic Productivity Calculation
   const now = Date.now();
   const oneWeek = 7 * 24 * 60 * 60 * 1000;
-  const recentLogs = logs.filter(l => now - l.timestamp < oneWeek);
-  const oldLogs = logs.filter(l => now - l.timestamp >= oneWeek && now - l.timestamp < 2 * oneWeek);
-
+  const recentLogs = displayLogs.filter(l => now - l.timestamp < oneWeek);
+  const oldLogs = displayLogs.filter(l => now - l.timestamp >= oneWeek && now - l.timestamp < 2 * oneWeek);
+  
   const productivityChange = oldLogs.length === 0 
     ? (recentLogs.length > 0 ? 100 : 0) 
     : ((recentLogs.length - oldLogs.length) / oldLogs.length) * 100;
-
+  
   const productivityDisplay = `${productivityChange >= 0 ? '+' : ''}${productivityChange.toFixed(1)}%`;
-...
 
   return (
     <MainLayout>

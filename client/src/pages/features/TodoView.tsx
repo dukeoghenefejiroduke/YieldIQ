@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { MainLayout } from '../../components/layout/MainLayout';
-import { db, TaskEntry } from '../../db/db';
+import { db, type TaskEntry } from '../../db/db';
 import { useAuthStore } from '../../store/authStore';
 import { CheckCircle, Circle, Plus } from 'lucide-react';
-import api from '../../services/api';
 
 const MOCK_TASKS = [
     { title: 'Check irrigation system', completed: false },

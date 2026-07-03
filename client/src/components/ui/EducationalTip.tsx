@@ -1,4 +1,3 @@
-import React from 'react';
 import { Lightbulb } from 'lucide-react';
 
 export const EducationalTip = ({ title, message }: { title: string; message: string }) => {

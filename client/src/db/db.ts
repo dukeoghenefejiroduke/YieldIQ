@@ -40,7 +40,6 @@ export class AgroDatabase extends Dexie {
       farmers: '++id, name, creditScore'
     });
   }
-...
 
   async updateFarmerCreditScore(farmerId: number, amount: number, type: 'sale' | 'purchase' | 'credit') {
     const farmer = await this.farmers.get(farmerId);

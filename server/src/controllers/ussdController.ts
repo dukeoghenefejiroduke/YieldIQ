@@ -16,8 +16,7 @@ export const getLogs = async (req, res) => {
 };
 
 export const handleUSSDRequest = async (req, res) => {
-...
-
+    try {
         const { sessionId, serviceCode, phoneNumber, text } = req.body;
         console.log('USSD Request:', { sessionId, serviceCode, phoneNumber, text });
         // Lookup farmer by phone number
@@ -58,7 +57,6 @@ export const handleUSSDRequest = async (req, res) => {
                 }
             }
             else if (mainChoice === '3') {
-                // ... (Transaction logging code remains the same)
                 if (inputParts.length === 1) {
                     responseText = `CON Enter transaction amount (₦):`;
                 }

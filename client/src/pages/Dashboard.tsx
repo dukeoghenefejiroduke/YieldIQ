@@ -1,10 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '../components/layout/MainLayout';
-import { useAuthStore } from '../store/authStore';
 import { useLogStore } from '../store/logStore';
 import { ConnectionStatus } from '../components/ui/ConnectionStatus';
-import { TrendingUp, ArrowUp, CloudUpload, RefreshCw, ShoppingBasket, Scale, Sprout, Shield } from 'lucide-react';
+import { TrendingUp, ArrowUp, CloudUpload, RefreshCw } from 'lucide-react';
 import { useSync } from '../hooks/useSync';
 import { getFarmerProfile } from '../services/farmerService';
 import { getMarketPrices } from '../services/marketService';
@@ -13,7 +12,6 @@ import { FieldForecast } from '../components/ui/FieldForecast';
 import { CommunityBenchmark } from '../components/ui/CommunityBenchmark';
 
 export const Dashboard = () => {
-  const { user } = useAuthStore();
   const { pendingCount, fetchLogs, syncLogs, isSyncing } = useLogStore();
   const navigate = useNavigate();
   const [farmer, setFarmer] = useState<any>(null);

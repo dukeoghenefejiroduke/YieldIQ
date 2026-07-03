@@ -1,4 +1,3 @@
-import React from 'react';
 import { Cloud, WifiOff } from 'lucide-react';
 import { useLogStore } from '../../store/logStore';
 
