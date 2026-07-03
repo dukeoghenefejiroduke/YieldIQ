@@ -15,8 +15,20 @@ export const getFarmerProfile = async (req, res) => {
 };
 export const getBenchmark = async (req, res) => {
     try {
-        // Mock implementation of benchmark
-        res.json({ percentile: 75 });
+        const userId = req.user?.userId;
+        const farmer = await Farmer.findOne({ userId });
+        if (!farmer) {
+            return res.status(404).json({ error: 'Farmer profile not found' });
+        }
+        // Count total farmers and farmers with lower score
+        const totalFarmers = await Farmer.countDocuments();
+        const farmersWithLowerScore = await Farmer.countDocuments({
+            creditScore: { $lt: farmer.creditScore }
+        });
+        const percentile = totalFarmers > 0
+            ? Math.round((farmersWithLowerScore / totalFarmers) * 100)
+            : 100;
+        res.json({ percentile });
     }
     catch (error) {
         res.status(500).json({ error: 'Failed to fetch benchmark' });

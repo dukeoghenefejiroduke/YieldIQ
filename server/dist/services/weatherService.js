@@ -1,3 +1,4 @@
+import axios from 'axios';
 export const checkInsuranceTrigger = async (weather) => {
     return weather.rainfallMm < (weather.thresholdMm * 0.5);
 };
@@ -6,10 +7,14 @@ export const fetchLocalizedWeather = async (lga) => {
     if (!apiKey) {
         throw new Error('OPENWEATHERMAP_API_KEY is not configured');
     }
-    console.log(`Fetching weather data for LGA: ${lga}`);
-    // Example call:
-    // const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${lga}&appid=${apiKey}`);
-    // Returning dummy data for placeholder structure
-    return { lga, rainfallMm: 10, thresholdMm: 50 };
+    // Call real API
+    const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${lga}&units=metric&appid=${apiKey}`);
+    return {
+        lga,
+        temp: Math.round(response.data.main.temp),
+        condition: response.data.weather[0].main,
+        rainfallMm: response.data.rain?.['1h'] || 0,
+        thresholdMm: 50 // Static threshold for this context
+    };
 };
 //# sourceMappingURL=weatherService.js.map
