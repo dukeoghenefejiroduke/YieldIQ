@@ -100,6 +100,7 @@ export const useLogStore = create<LogState>((set, get) => ({
   addLocalLog: async (logData) => {
     const newLog: LogEntry = {
       ...logData,
+      uuid: uuidv4(),
       syncStatus: 'pending'
     };
     const id = await db.logs.add(newLog);
@@ -127,7 +128,7 @@ export const useLogStore = create<LogState>((set, get) => ({
       await performSync();
       set({ syncMessage: 'Synced' });
       await get().fetchLogs();
-    } catch (error) {
+    } catch (_error) {
         set({ syncMessage: 'Sync failed - will retry' });
     } finally {
       set({ isSyncing: false });

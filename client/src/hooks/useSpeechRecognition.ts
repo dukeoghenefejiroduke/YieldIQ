@@ -28,7 +28,7 @@ export const useSpeechRecognition = () => {
   const [transcript, setTranscript] = useState('');
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
 
-  const startRecording = () => {
+  const startRecording = (lang = 'en-US') => {
     const speechWindow = window as Window & {
       SpeechRecognition?: SpeechRecognitionConstructor;
       webkitSpeechRecognition?: SpeechRecognitionConstructor;
@@ -43,6 +43,7 @@ export const useSpeechRecognition = () => {
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
+    recognition.lang = lang; // Set the language
     
     recognition.onresult = (event) => {
       let currentTranscript = '';
@@ -55,7 +56,7 @@ export const useSpeechRecognition = () => {
     recognition.start();
     recognitionRef.current = recognition;
     setIsRecording(true);
-    toast.success('Recording started...', { icon: '🎤' });
+    toast.success(`Recording started (${lang})...`, { icon: '🎤' });
   };
 
   const stopRecording = () => {

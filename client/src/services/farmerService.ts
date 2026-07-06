@@ -5,6 +5,11 @@ export const createFarmerProfile = async (profileData: { name: string; phoneNumb
   return data;
 };
 
+export const updateFarmerProfile = async (profileData: { name: string; phoneNumber: string; location: string }) => {
+  const { data } = await api.put('/farmer/profile', profileData);
+  return data;
+};
+
 export const getFarmerProfile = async () => {
   const { data } = await api.get('/farmer/profile');
   return data;

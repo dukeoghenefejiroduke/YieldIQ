@@ -9,6 +9,7 @@ import { CreateTransaction } from './pages/features/CreateTransaction';
 import { WhatsappView } from './pages/features/WhatsappView';
 import { UssdView } from './pages/features/UssdView';
 import { ReportsView } from './pages/features/ReportsView';
+import { ProfileSettings } from './pages/features/ProfileSettings';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { useAuth } from './hooks/useAuth';
@@ -64,9 +65,17 @@ function AppShell() {
             <UssdView />
           </ProtectedRoute>
         } />
+import { ProfileSettings } from './pages/features/ProfileSettings';
+// ... (rest of imports)
+// ...
         <Route path="/reports" element={
           <ProtectedRoute>
             <ReportsView />
+          </ProtectedRoute>
+        } />
+        <Route path="/settings" element={
+          <ProtectedRoute>
+            <ProfileSettings />
           </ProtectedRoute>
         } />
         <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { Mic, MapPin } from 'lucide-react';
+import { Mic, MapPin, Globe } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useLogStore } from '../store/logStore';
 import { parseTransaction } from '../utils/aiParser';
@@ -9,6 +9,7 @@ import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
 export const VoiceEntry = () => {
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
+  const [lang, setLang] = useState(localStorage.getItem('voice-lang') || 'en-US'); // Initialize from localStorage
   
   const { isRecording, transcript, setTranscript, startRecording: hookStartRecording, stopRecording } = useSpeechRecognition();
   
@@ -40,7 +41,7 @@ export const VoiceEntry = () => {
   const startRecording = () => {
     // Auto-fetch location when recording starts
     if (!location) fetchLocation();
-    hookStartRecording();
+    hookStartRecording(lang); // Pass language
   };
 
   const saveLog = async () => {
@@ -83,6 +84,15 @@ export const VoiceEntry = () => {
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-bold">Voice Journal</h2>
         <button className="text-sm font-bold text-primary hover:underline">+ New</button>
+      </div>
+
+      <div className="flex items-center gap-2 mb-2">
+        <Globe className="w-4 h-4 text-text-muted" />
+        <select value={lang} onChange={(e) => setLang(e.target.value)} className="bg-background border border-glass-border rounded-lg p-1 text-sm">
+            <option value="en-US">English (US)</option>
+            <option value="en-NG">English (Nigeria)</option>
+            <option value="pcm-NG">Pidgin (Nigeria)</option>
+        </select>
       </div>
 
       <div className="relative w-full">

@@ -2,6 +2,7 @@ import Dexie, { type Table } from 'dexie';
 
 export interface LogEntry {
   id?: number;
+  uuid: string; // Add this
   userId: string;
   farmerId?: number;
   type: 'sale' | 'purchase' | 'credit';
@@ -34,8 +35,8 @@ export class AgroDatabase extends Dexie {
 
   constructor() {
     super('AgroVoiceDB');
-    this.version(3).stores({
-      logs: '++id, userId, syncStatus, type, farmerId',
+    this.version(4).stores({
+      logs: '++id, &uuid, userId, syncStatus, type, farmerId',
       tasks: '++id, userId, completed',
       farmers: '++id, name, creditScore'
     });
