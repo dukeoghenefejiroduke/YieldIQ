@@ -1,6 +1,9 @@
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { CommunityPage } from './pages/features/CommunityPage';
+import { ForecastPage } from './pages/features/ForecastPage';
+import { AlertsPage } from './pages/features/AlertsPage';
 import { Signup } from './pages/Signup';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
@@ -43,6 +46,21 @@ function AppShell() {
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/community" element={
+          <ProtectedRoute>
+            <CommunityPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/forecast" element={
+          <ProtectedRoute>
+            <ForecastPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/alerts" element={
+          <ProtectedRoute>
+            <AlertsPage />
           </ProtectedRoute>
         } />
         <Route path="/create-profile" element={

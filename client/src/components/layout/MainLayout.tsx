@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { LayoutDashboard, BarChart, Settings, Globe, LogOut, User } from 'lucide-react';
+import { LayoutDashboard, BarChart, Settings, Globe, LogOut, User, Users, CloudSun, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { SyncIndicator } from '../ui/SyncIndicator';
@@ -22,6 +22,9 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { name: 'Community', path: '/community', icon: Users },
+    { name: 'Forecast', path: '/forecast', icon: CloudSun },
+    { name: 'Alerts', path: '/alerts', icon: Bell },
     { name: 'Reports', path: '/reports', icon: BarChart },
   ];
 
@@ -30,14 +33,14 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <header className="sticky top-0 z-40 backdrop-blur-md bg-slate-900/70 border-b border-slate-700 px-6 py-4 flex items-center justify-between">
+        <header className="sticky top-0 z-40 backdrop-blur-md bg-slate-900/70 border-b border-slate-700 px-8 py-6 flex items-center justify-between">
           <SyncIndicator />
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
             <Globe className="w-5 h-5 cursor-pointer text-gray-300" />
             <div className="relative" ref={settingsRef}>
                 <button 
                     onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-                    className="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center text-white text-xs"
+                    className="w-10 h-10 rounded-full bg-slate-600 flex items-center justify-center text-white text-sm"
                 >
                     U
                 </button>
@@ -65,7 +68,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="flex-1 p-4 overflow-y-auto"
+          className="flex-1 p-6 md:p-10 overflow-y-auto"
         >
           {children}
         </motion.main>
