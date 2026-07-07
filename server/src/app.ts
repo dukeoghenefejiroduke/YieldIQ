@@ -18,6 +18,7 @@ import ussdRoutes from './routes/ussdRoutes.js';
 import farmerRoutes from './routes/farmerRoutes.js';
 import marketRoutes from './routes/marketRoutes.js';
 import weatherRoutes from './routes/weatherRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
 import smsRoutes from './routes/smsRoutes.js';
 import conversationRoutes from './routes/conversationRoutes.js';
 import { startCronJobs } from './cronJobs.js';
@@ -80,6 +81,7 @@ app.use('/api/ussd', ussdRoutes);
 app.use('/api/farmer', farmerRoutes);
 app.use('/api/market', marketRoutes);
 app.use('/api/weather', weatherRoutes);
+app.use('/api/payment', paymentRoutes);
 app.use('/api/sms', smsRoutes);
 app.use('/api/conversation', conversationRoutes);
 

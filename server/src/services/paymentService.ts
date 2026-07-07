@@ -1,18 +1,20 @@
-export interface PaymentGateway {
-  initializePayment(amount: number, email: string, reference: string): Promise<{ authorizationUrl: string }>;
-  verifyPayment(reference: string): Promise<{ status: string }>;
-}
+import { Request, Response } from 'express';
 
-export class PaystackGateway implements PaymentGateway {
-  async initializePayment(amount: number, email: string, reference: string): Promise<{ authorizationUrl: string }> {
-    // Implementation for Paystack initialization (using axios for API call)
-    console.log('Initializing Paystack payment...', { amount, email, reference });
-    return { authorizationUrl: 'https://checkout.paystack.com/...' };
-  }
-
-  async verifyPayment(reference: string): Promise<{ status: string }> {
-    // Implementation for Paystack verification
-    console.log('Verifying Paystack payment...', { reference });
+// Mock service for Paystack/Flutterwave
+export const paymentService = {
+  initializePayment: async (amount: number, email: string, reference: string) => {
+    console.log(`[Mock] Initializing payment: ${amount} for ${email}, ref: ${reference}`);
+    return { authorizationUrl: 'https://checkout.paystack.com/mock-url' };
+  },
+  verifyPayment: async (reference: string) => {
+    console.log(`[Mock] Verifying payment ref: ${reference}`);
+    // Simulate successful payment
     return { status: 'success' };
   }
-}
+};
+
+export const handlePaymentWebhook = async (req: Request, res: Response) => {
+  const { event, data } = req.body;
+  console.log(`[Mock] Received payment webhook: ${event}`, data);
+  res.status(200).send('Webhook received');
+};

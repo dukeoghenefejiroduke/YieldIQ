@@ -1,43 +1,32 @@
 import { Request, Response } from 'express';
-import Log from '../models/Log.js';
-import { PaystackGateway } from '../services/paymentService.js';
+import { paymentService } from '../services/paymentService.js';
 import { creditScoringService } from '../services/creditScoringService.js';
-
-const paymentGateway = new PaystackGateway();
+import Log from '../models/Log.js';
+import Farmer from '../models/Farmer.js';
 
 export const handlePaymentWebhook = async (req: Request, res: Response) => {
-  try {
-    const { reference, status } = req.body;
-    
-    console.log('Processing webhook for reference:', reference);
+    // 1. Process payment via service
+    const result = await paymentService.handlePaymentWebhook(req, res);
 
-    const updatedLog = await Log.findOneAndUpdate(
-      { transactionReference: reference }, 
-      { paymentStatus: status === 'SUCCESS' ? 'completed' : 'failed' },
-      { new: true }
-    );
-    
-    if (!updatedLog) {
-      return res.status(404).json({ error: 'Log not found' });
+    // 2. Extract data needed for scoring (assuming webhook provides it in req.body)
+    const { status, logId } = req.body; 
+
+    // 3. Reinstated Credit Scoring Logic
+    if (status === 'SUCCESS' && logId) {
+        const updatedLog = await Log.findById(logId).populate<{ farmerId: typeof Farmer }>('farmerId');
+        
+        if (updatedLog && updatedLog.farmerId) {
+            const farmer = updatedLog.farmerId;
+            
+            // Recalculate Farmer Score
+            await creditScoringService.recalculateFarmerScore(farmer._id.toString());
+
+            // Recalculate Cooperative Score
+            if (farmer.cooperativeId) {
+                await creditScoringService.recalculateCooperativeScore(farmer.cooperativeId.toString());
+            }
+        }
     }
-
-    // Trigger credit score recalculation if payment succeeded
-    if (status === 'SUCCESS' && updatedLog.farmerId) {
-      await creditScoringService.recalculateFarmerScore(updatedLog.farmerId.toString());
-      
-      const farmer = await Log.findById(updatedLog._id).populate('farmerId');
-      if (farmer && farmer.farmerId && typeof farmer.farmerId === 'object' && 'cooperativeId' in farmer.farmerId) {
-          // @ts-ignore
-          if (farmer.farmerId.cooperativeId) {
-            // @ts-ignore
-            await creditScoringService.recalculateCooperativeScore(farmer.farmerId.cooperativeId.toString());
-          }
-      }
-    }
-
-    res.status(200).send('WEBHOOK_PROCESSED');
-  } catch (error) {
-    console.error('Webhook error:', error);
-    res.status(500).send('Internal Server Error');
-  }
+    
+    return result;
 };

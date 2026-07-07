@@ -10,6 +10,8 @@ import { getMarketPrices } from '../services/marketService';
 import { EducationalTip } from '../components/ui/EducationalTip';
 import { FieldForecast } from '../components/ui/FieldForecast';
 import { CommunityBenchmark } from '../components/ui/CommunityBenchmark';
+import { AlertsFeed } from '../components/ui/AlertsFeed';
+import { CommunityHub } from '../components/features/CommunityHub';
 
 const MOCK_MARKET_TRENDS = [
     { crop: 'Cassava', price: 450, unit: 'kg', region: 'Rivers', sellSignal: false },
@@ -65,6 +67,8 @@ export const Dashboard = () => {
 
         <FieldForecast />
         <CommunityBenchmark />
+        <AlertsFeed />
+        {farmer && <CommunityHub cooperativeId={farmer.cooperativeId || 'default-coop'} />}
 
         {/* Metrics */}
         <div className="grid grid-cols-2 gap-4">
