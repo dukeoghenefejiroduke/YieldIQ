@@ -65,9 +65,6 @@ function AppShell() {
             <UssdView />
           </ProtectedRoute>
         } />
-import { ProfileSettings } from './pages/features/ProfileSettings';
-// ... (rest of imports)
-// ...
         <Route path="/reports" element={
           <ProtectedRoute>
             <ReportsView />

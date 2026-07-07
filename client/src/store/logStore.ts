@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { v4 as uuidv4 } from 'uuid';
 import { db, type LogEntry } from '../db/db';
 import api from '../services/api';
 import { syncLogs as performSync } from '../services/syncService';

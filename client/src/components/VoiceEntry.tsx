@@ -57,6 +57,7 @@ export const VoiceEntry = () => {
       const { type, amount, item } = await parseTransaction(transcript);
 
       await addLocalLog({
+        uuid: 'temporary-uuid', // This will be overwritten by zustand's addLocalLog
         userId: user.id,
         transcription: transcript,
         timestamp: Date.now(),

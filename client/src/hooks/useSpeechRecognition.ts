@@ -16,6 +16,7 @@ interface SpeechRecognitionEventLike {
 interface SpeechRecognitionLike {
   continuous: boolean;
   interimResults: boolean;
+  lang: string; // Add this
   onresult: ((event: SpeechRecognitionEventLike) => void) | null;
   start: () => void;
   stop: () => void;

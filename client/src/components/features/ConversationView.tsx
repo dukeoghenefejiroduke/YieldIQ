@@ -9,7 +9,11 @@ export const ConversationView = () => {
     const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
     const [input, setInput] = useState('');
     const { user } = useAuthStore();
-    const { isRecording, transcript, startRecording, stopRecording } = useSpeechRecognition();
+    const { isRecording, transcript, startRecording: hookStartRecording, stopRecording } = useSpeechRecognition();
+
+    const handleStart = () => {
+        hookStartRecording();
+    };
 
     // Sync transcript to input
     useEffect(() => {
@@ -45,7 +49,7 @@ export const ConversationView = () => {
             </div>
             <div className="flex gap-2">
                 <button 
-                    onClick={isRecording ? stopRecording : startRecording}
+                    onClick={isRecording ? stopRecording : handleStart}
                     className={`p-2 rounded ${isRecording ? 'bg-alert-danger text-white animate-pulse' : 'bg-secondary text-white'}`}
                 >
                     <Mic className="w-5 h-5" />

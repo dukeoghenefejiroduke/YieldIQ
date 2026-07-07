@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Bell, TrendingUp, CloudRain } from 'lucide-react';
-import api from '../services/api';
 
 export const AlertsFeed = () => {
   const [alerts, setAlerts] = useState<any[]>([]);

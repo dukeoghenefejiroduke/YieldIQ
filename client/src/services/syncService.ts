@@ -23,10 +23,9 @@ export const syncLogs = async () => {
       await api.post('/logs/batch', { logs: payload });
       
       // Mark all as synced
-      await db.logs.bulkUpdate(pendingLogs.map(log => log.id!), { syncStatus: 'synced' });
+      await db.logs.bulkPut(pendingLogs.map(log => ({ ...log, syncStatus: 'synced' })));
       console.log(`Successfully synced ${pendingLogs.length} logs`);
   } catch (error) {
     console.error('Failed to batch sync logs', error);
-    // Fallback: individual sync with retry (optional, keeping it simple for now)
   }
 };

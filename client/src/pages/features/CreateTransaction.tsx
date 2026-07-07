@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MainLayout } from '../../components/layout/MainLayout';
-import { createTransaction } from '../../services/logService';
+import { useLogStore } from '../../store/logStore';
+import { useAuthStore } from '../../store/authStore';
 import toast from 'react-hot-toast';
 import { MapPin, QrCode } from 'lucide-react';
 import { ScannerComponent } from '../../components/ui/ScannerComponent';
@@ -18,6 +19,8 @@ export const CreateTransaction = () => {
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const navigate = useNavigate();
+  const addLocalLog = useLogStore((state) => state.addLocalLog);
+  const { user } = useAuthStore();
 
   const fetchLocation = () => {
     if (!navigator.geolocation) {
@@ -51,9 +54,16 @@ export const CreateTransaction = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user?.id) {
+        toast.error('User not logged in');
+        return;
+    }
     try {
-      await createTransaction({
+      await addLocalLog({
+        uuid: 'temporary-uuid', // This will be overwritten by zustand's addLocalLog
+        userId: user.id,
         transcription: formData.transcription,
+        timestamp: Date.now(),
         type: formData.type as 'sale' | 'purchase' | 'credit',
         amount: Number(formData.amount),
         item: formData.item,
