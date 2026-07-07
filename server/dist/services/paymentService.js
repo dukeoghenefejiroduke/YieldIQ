@@ -1,13 +1,18 @@
-export class PaystackGateway {
-    async initializePayment(amount, email, reference) {
-        // Implementation for Paystack initialization (using axios for API call)
-        console.log('Initializing Paystack payment...', { amount, email, reference });
-        return { authorizationUrl: 'https://checkout.paystack.com/...' };
-    }
-    async verifyPayment(reference) {
-        // Implementation for Paystack verification
-        console.log('Verifying Paystack payment...', { reference });
+// Mock service for Paystack/Flutterwave
+export const paymentService = {
+    initializePayment: async (amount, email, reference) => {
+        console.log(`[Mock] Initializing payment: ${amount} for ${email}, ref: ${reference}`);
+        return { authorizationUrl: 'https://checkout.paystack.com/mock-url' };
+    },
+    verifyPayment: async (reference) => {
+        console.log(`[Mock] Verifying payment ref: ${reference}`);
+        // Simulate successful payment
         return { status: 'success' };
     }
-}
+};
+export const handlePaymentWebhook = async (req, res) => {
+    const { event, data } = req.body;
+    console.log(`[Mock] Received payment webhook: ${event}`, data);
+    res.status(200).send('Webhook received');
+};
 //# sourceMappingURL=paymentService.js.map
