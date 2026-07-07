@@ -1,5 +1,5 @@
 import { MainLayout } from '../../components/layout/MainLayout';
-import { UssdView } from '../../components/features/UssdView';
+import { UssdView } from './UssdView';
 
 export const UssdPage = () => {
     return (

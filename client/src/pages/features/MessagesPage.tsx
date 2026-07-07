@@ -1,5 +1,5 @@
 import { MainLayout } from '../../components/layout/MainLayout';
-import { WhatsappView } from '../../components/features/WhatsappView';
+import { WhatsappView } from './WhatsappView';
 
 export const MessagesPage = () => {
     return (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { LayoutDashboard, BarChart, Settings, Globe, LogOut, User, Users, CloudSun, Bell, TrendingUp, MessageSquare, PhoneCall, MessageCircle } from 'lucide-react';
+import { LayoutDashboard, BarChart, Settings, Globe, LogOut, User, Users, TrendingUp, MessageSquare, PhoneCall, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { SyncIndicator } from '../ui/SyncIndicator';
