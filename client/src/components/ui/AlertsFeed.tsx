@@ -1,19 +1,28 @@
 import { useState, useEffect } from 'react';
 import { Bell, TrendingUp, CloudRain } from 'lucide-react';
+import api from '../../services/api';
 
 export const AlertsFeed = () => {
   const [alerts, setAlerts] = useState<any[]>([]);
 
   useEffect(() => {
-    // In a real app, this might use WebSockets or a poll
     const fetchAlerts = async () => {
         try {
-            // Placeholder: Assuming an endpoint exists or we are simulating
-            // For now, displaying static example to show UI layout
-            setAlerts([
-                { id: 1, type: 'weather', message: 'Low rainfall detected. Insurance trigger active.' },
-                { id: 2, type: 'price', message: 'Maize prices increased by 5% in your region.' }
+            const [weatherRes, marketRes] = await Promise.all([
+                api.get('/weather/alert'),
+                api.get('/market/alerts')
             ]);
+            
+            const newAlerts = [];
+            if (weatherRes.data.alert) {
+                newAlerts.push({ id: 'weather', type: 'weather', message: 'Insurance trigger active due to low rainfall.' });
+            }
+            if (marketRes.data && marketRes.data.length > 0) {
+                marketRes.data.forEach((alert: any, index: number) => {
+                    newAlerts.push({ id: `market-${index}`, type: 'price', message: alert.message });
+                });
+            }
+            setAlerts(newAlerts);
         } catch (error) {
             console.error('Error fetching alerts', error);
         }
@@ -27,7 +36,7 @@ export const AlertsFeed = () => {
         <Bell className="w-5 h-5 text-secondary" /> Advisory Alerts
       </h2>
       <div className="space-y-3">
-        {alerts.map(alert => (
+        {alerts.length === 0 ? <p className="text-sm text-gray-400">No new alerts.</p> : alerts.map(alert => (
           <div key={alert.id} className="p-3 bg-background rounded-lg border border-glass-border flex gap-3">
             {alert.type === 'weather' ? <CloudRain className="w-5 h-5 text-blue-500" /> : <TrendingUp className="w-5 h-5 text-green-500" />}
             <p className="text-sm">{alert.message}</p>

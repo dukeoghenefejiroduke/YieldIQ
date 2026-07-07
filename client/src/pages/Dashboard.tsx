@@ -3,41 +3,27 @@ import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '../components/layout/MainLayout';
 import { useLogStore } from '../store/logStore';
 import { ConnectionStatus } from '../components/ui/ConnectionStatus';
-import { TrendingUp, ArrowUp, CloudUpload, RefreshCw } from 'lucide-react';
+import { CloudUpload, RefreshCw } from 'lucide-react';
 import { useSync } from '../hooks/useSync';
 import { getFarmerProfile } from '../services/farmerService';
-import { getMarketPrices } from '../services/marketService';
 import { EducationalTip } from '../components/ui/EducationalTip';
-import { CommunityBenchmark } from '../components/ui/CommunityBenchmark';
-
-const MOCK_MARKET_TRENDS = [
-    { crop: 'Cassava', price: 450, unit: 'kg', region: 'Rivers', sellSignal: false },
-    { crop: 'Maize', price: 650, unit: 'mudu', region: 'Rivers', sellSignal: true },
-    { crop: 'Yam', price: 1200, unit: 'tuber', region: 'Rivers', sellSignal: false }
-];
 
 export const Dashboard = () => {
   const { pendingCount, fetchLogs, syncLogs, isSyncing } = useLogStore();
   const navigate = useNavigate();
   const [farmer, setFarmer] = useState<any>(null);
-  const [marketTrends, setMarketTrends] = useState<any[]>([]);
 
   useSync();
 
   const fetchData = useCallback(async () => {
     fetchLogs();
     try {
-      const [profile, trends] = await Promise.all([
-          getFarmerProfile(),
-          getMarketPrices()
-      ]);
+      const profile = await getFarmerProfile();
       setFarmer(profile);
-      setMarketTrends(trends.length > 0 ? trends : MOCK_MARKET_TRENDS);
     } catch (error: any) {
       if (error.response?.status === 404) {
         navigate('/create-profile');
       }
-      setMarketTrends(MOCK_MARKET_TRENDS);
     }
   }, [fetchLogs, navigate]);
 
@@ -90,29 +76,6 @@ export const Dashboard = () => {
                     <p className="text-2xl font-bold text-green-400">Synced</p>
                 </div>
             )}
-        </div>
-
-        {/* Market Trends (Top 3) */}
-        <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
-            <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-white"><TrendingUp className="text-green-400" /> Top Market Signals</h2>
-            <div className="space-y-3">
-                {marketTrends.slice(0, 3).map(trend => (
-                    <button 
-                        key={trend.crop} 
-                        onClick={() => navigate('/log-transaction', { state: { prefillItem: trend.crop } })}
-                        className="w-full flex justify-between items-center bg-slate-700 p-3 rounded-lg active:scale-95 transition-transform"
-                    >
-                        <span className="font-bold text-white">{trend.crop}</span>
-                        {trend.sellSignal ? (
-                            <span className="bg-green-900 text-green-100 text-xs px-2 py-1 rounded flex items-center gap-1 font-bold">
-                                <ArrowUp className="w-3 h-3"/> SELL NOW
-                            </span>
-                        ) : (
-                            <span className="text-gray-400 text-xs">Wait</span>
-                        )}
-                    </button>
-                ))}
-            </div>
         </div>
       </div>
     </MainLayout>

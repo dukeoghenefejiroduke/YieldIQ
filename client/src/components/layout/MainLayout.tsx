@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { LayoutDashboard, BarChart, Settings, Globe, LogOut, User, Users, CloudSun, Bell } from 'lucide-react';
+import { LayoutDashboard, BarChart, Settings, Globe, LogOut, User, Users, CloudSun, Bell, TrendingUp, MessageSquare, PhoneCall, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { SyncIndicator } from '../ui/SyncIndicator';
@@ -23,9 +23,11 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Community', path: '/community', icon: Users },
-    { name: 'Forecast', path: '/forecast', icon: CloudSun },
-    { name: 'Alerts', path: '/alerts', icon: Bell },
-    { name: 'Reports', path: '/reports', icon: BarChart },
+    { name: 'Market', path: '/market', icon: TrendingUp },
+    { name: 'Msgs', path: '/messages', icon: MessageSquare },
+    { name: 'USSD', path: '/ussd', icon: PhoneCall },
+    { name: 'Chat', path: '/conversations', icon: MessageCircle },
+    { name: 'More', path: '/reports', icon: BarChart },
   ];
 
   return (

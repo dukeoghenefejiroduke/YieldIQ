@@ -4,6 +4,10 @@ import { Toaster } from 'react-hot-toast';
 import { CommunityPage } from './pages/features/CommunityPage';
 import { ForecastPage } from './pages/features/ForecastPage';
 import { AlertsPage } from './pages/features/AlertsPage';
+import { MarketPage } from './pages/features/MarketPage';
+import { MessagesPage } from './pages/features/MessagesPage';
+import { UssdPage } from './pages/features/UssdPage';
+import { ConversationsPage } from './pages/features/ConversationsPage';
 import { Signup } from './pages/Signup';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
@@ -61,6 +65,26 @@ function AppShell() {
         <Route path="/alerts" element={
           <ProtectedRoute>
             <AlertsPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/market" element={
+          <ProtectedRoute>
+            <MarketPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/messages" element={
+          <ProtectedRoute>
+            <MessagesPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/ussd" element={
+          <ProtectedRoute>
+            <UssdPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/conversations" element={
+          <ProtectedRoute>
+            <ConversationsPage />
           </ProtectedRoute>
         } />
         <Route path="/create-profile" element={

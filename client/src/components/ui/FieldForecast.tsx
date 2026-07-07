@@ -29,6 +29,7 @@ export const FieldForecast = () => {
                 <h4 className="font-bold text-white text-sm">Field Forecast</h4>
                 <p className="text-2xl font-black text-white">{weather.temp}°C</p>
                 <p className="text-xs text-gray-300">{weather.condition}</p>
+                <p className="text-xs text-blue-300 mt-1">Rain: {weather.rainfallMm || 0}mm</p>
             </div>
             {weather.condition.includes('Rain') ? <CloudRain className="w-10 h-10 text-blue-400"/> : 
              weather.condition.includes('Cloud') ? <Cloud className="w-10 h-10 text-gray-400"/> : 

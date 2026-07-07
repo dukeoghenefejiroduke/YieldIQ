@@ -24,3 +24,13 @@ export const handleConversation = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Failed to process conversation' });
     }
 };
+
+export const getConversations = async (req: Request, res: Response) => {
+    try {
+        const userId = (req as any).user.id;
+        const chatSession = await ChatSession.findOne({ userId });
+        res.json(chatSession ? chatSession.messages : []);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch conversations' });
+    }
+};
